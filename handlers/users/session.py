@@ -120,6 +120,7 @@ async def get_day(call: CallbackQuery, state: FSMContext):
         else:
             await SessionForm.next()
             await call.message.answer(text='Vaqtni tanlang:', reply_markup=create_clock())
+            await call.message.delete()
         await call.answer(cache_time=1)
     elif actions == "PREV-MONTH":
         pre = curr - timedelta(days=1)
@@ -132,8 +133,9 @@ async def get_day(call: CallbackQuery, state: FSMContext):
                                      reply_markup=create_calendar(int(ne.year), int(ne.month)))
         await SessionForm.kun.set()
     elif actions == 'IGNORE':
-        await call.message.edit_text("Iltimos kunini tanlang!",
-                                     reply_markup=create_calendar(int(now.year), int(now.month)))
+        await call.message.answer("Iltimos kunini tanlang!",
+                                  reply_markup=create_calendar(int(now.year), int(now.month)))
+        await call.message.delete()
         await SessionForm.kun.set()
     else:
         await call.message.edit_text(text="Biror narsa noto'g'ri ketdi!",
@@ -143,6 +145,7 @@ async def get_day(call: CallbackQuery, state: FSMContext):
 
 @dp.callback_query_handler(state=SessionForm.vaqt)
 async def get_date(call: CallbackQuery, state: FSMContext):
+    now = datetime.now()
     a = call_data(call.data)
     actions, hr, mn = a
     hr = datetime.strptime(hr, "%H")
@@ -164,11 +167,16 @@ async def get_date(call: CallbackQuery, state: FSMContext):
                                      reply_markup=create_clock(mn=mn + timedelta(minutes=1), hr=hr))
         await SessionForm.vaqt.set()
     elif actions == "OK":
-        await state.update_data(
-            {'soat': f"{hr.hour}:{mn.minute}:00+05:00"}
-        )
-        await call.message.answer(text='Tulov turini tanlang:', reply_markup=payment)
-        await SessionForm.next()
+        if (now.time().hour >= hr.hour) and (now.time().minute > mn.minute):
+            await call.message.edit_text(text="O'tib ketgan vaqtni tanlab bo'lmaydi\nIltimos vaqtni tanlang:",
+                                         reply_markup=create_clock())
+        else:
+            await state.update_data(
+                {'soat': f"{hr.hour}:{mn.minute}:00+05:00"}
+            )
+            await call.message.answer(text='Tulov turini tanlang:', reply_markup=payment)
+            await SessionForm.next()
+            await call.message.delete()
     await call.answer(cache_time=1)
 
 
