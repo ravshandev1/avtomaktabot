@@ -167,7 +167,10 @@ async def get_date(call: CallbackQuery, state: FSMContext):
                                      reply_markup=create_clock(mn=mn + timedelta(minutes=1), hr=hr))
         await SessionForm.vaqt.set()
     elif actions == "OK":
-        if (now.time().hour >= hr.hour) and (now.time().minute > mn.minute):
+        data = await state.get_data()
+        dt = data['kun']
+        kun = int(dt.split('-')[2])
+        if (now.day == kun) and (now.time().hour >= hr.hour) and (now.time().minute > mn.minute):
             await call.message.edit_text(text="O'tib ketgan vaqtni tanlab bo'lmaydi\nIltimos vaqtni tanlang:",
                                          reply_markup=create_clock())
         else:
