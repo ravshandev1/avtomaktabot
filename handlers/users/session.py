@@ -106,9 +106,9 @@ async def get_location(mes: Message, state: FSMContext):
 async def get_day(call: CallbackQuery, state: FSMContext):
     now = datetime.now()
     a = call_data(call.data)
-    (action, year, month, day) = a
+    actions, year, month, day = a
     curr = datetime(int(year), int(month), 1)
-    if action == "DAY":
+    if actions == "DAY":
         ret_data = datetime(int(year), int(month), int(day))
         await state.update_data(
             {'kun': f"{year}-{month}-{day}"}
@@ -121,17 +121,17 @@ async def get_day(call: CallbackQuery, state: FSMContext):
             await SessionForm.next()
             await call.message.answer(text='Vaqtni tanlang:', reply_markup=create_clock())
         await call.answer(cache_time=1)
-    elif action == "PREV-MONTH":
+    elif actions == "PREV-MONTH":
         pre = curr - timedelta(days=1)
         await call.message.edit_text("Iltimos kunini tanlang!",
                                      reply_markup=create_calendar(int(pre.year), int(pre.month)))
         await SessionForm.kun.set()
-    elif action == "NEXT-MONTH":
+    elif actions == "NEXT-MONTH":
         ne = curr + timedelta(days=31)
         await call.message.edit_text("Iltimos vajdeniya kunini tanlang!",
                                      reply_markup=create_calendar(int(ne.year), int(ne.month)))
         await SessionForm.kun.set()
-    elif action == 'IGNORE':
+    elif actions == 'IGNORE':
         await call.message.edit_text("Iltimos kunini tanlang!",
                                      reply_markup=create_calendar(int(now.year), int(now.month)))
         await SessionForm.kun.set()
@@ -144,26 +144,26 @@ async def get_day(call: CallbackQuery, state: FSMContext):
 @dp.callback_query_handler(state=SessionForm.vaqt)
 async def get_date(call: CallbackQuery, state: FSMContext):
     a = call_data(call.data)
-    (action, hr, mn) = a
+    actions, hr, mn = a
     hr = datetime.strptime(hr, "%H")
     mn = datetime.strptime(mn, "%M")
-    if action == "hour⬆️":
+    if actions == "hour⬆️":
         await call.message.edit_text(text="Vaqtni tanlang:",
                                      reply_markup=create_clock(hr=hr - timedelta(hours=1), mn=mn))
         await SessionForm.vaqt.set()
-    elif action == "hour⬇️":
+    elif actions == "hour⬇️":
         await call.message.edit_text(text="Vaqtni tanlang:",
                                      reply_markup=create_clock(hr=hr + timedelta(hours=1), mn=mn))
         await SessionForm.vaqt.set()
-    elif action == "minute⬆️":
+    elif actions == "minute⬆️":
         await call.message.edit_text(text="Vaqtni tanlang:",
                                      reply_markup=create_clock(mn=mn - timedelta(minutes=1), hr=hr))
         await SessionForm.vaqt.set()
-    elif action == "minute⬇️":
+    elif actions == "minute⬇️":
         await call.message.edit_text(text="Vaqtni tanlang:",
                                      reply_markup=create_clock(mn=mn + timedelta(minutes=1), hr=hr))
         await SessionForm.vaqt.set()
-    elif action == "OK":
+    elif actions == "OK":
         await state.update_data(
             {'soat': f"{hr.hour}:{mn.minute}:00+05:00"}
         )
