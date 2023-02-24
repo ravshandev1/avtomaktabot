@@ -66,20 +66,27 @@ async def get_car(mes: Message, state: FSMContext):
     car = await state.get_data()
     res = requests.get(url=f"{BASE_URL}/session/?cat={car['toifa']}&gen={car['jins']}&car={car['moshina']}")
     ins = res.json()
-    await state.update_data(
-        {'ins_tg_id': ins[0]['telegram_id']}
-    )
+    data = list()
     markup = ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
     for i in ins:
         markup.insert(KeyboardButton(text=f"{i['ism']}"))
+        data.append({'ins_ism': i['ism'], 'ins_tg': i['telegram_id']})
+    await state.update_data(
+        {'ins_data': data}
+    )
     await mes.answer("Instruktirni tanlang", reply_markup=markup)
     await SessionForm.next()
 
 
 @dp.message_handler(state=SessionForm.instructor)
 async def get_instructor(mes: Message, state: FSMContext):
+    data = await state.get_data()
+    tg = None
+    for i in data['ins_data']:
+        if i['ins_ism'] == mes.text:
+            tg = i['ins_tg']
     await state.update_data(
-        {'instructor': mes.text}
+        {'instructor': mes.text, 'ins_tg_id': tg}
     )
     await mes.answer("Instruktir sizni qayerdan olib ketsin?", reply_markup=where)
     await SessionForm.next()
