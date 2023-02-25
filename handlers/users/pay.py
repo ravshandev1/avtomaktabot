@@ -7,9 +7,9 @@ from keyboards.default.is_authenticated import menu_instructor
 import requests
 
 
-@dp.message_handler(text="Balansni to'ldirish")
+@dp.message_handler(text="Балансни тўлдириш")
 async def get_summa(mes: Message):
-    await mes.answer("Balansingizga to'ldirmoqchi bo'lgan summani kiriting:", reply_markup=ReplyKeyboardRemove())
+    await mes.answer("Балансингизни тулдтрмокчи булган суммани критинг:", reply_markup=ReplyKeyboardRemove())
     await Balans.summa.set()
 
 
@@ -22,12 +22,12 @@ async def balans(mes: Message, state: FSMContext):
     await bot.send_invoice(
         mes.chat.id,
         title='Balansni to\'ldirish',
-        description='Balansingiz uchun to\'lovni amalga oshiring',
+        description='Балансингиз учун тўловни амалга оширинг',
         payload='some-invoice',
         provider_token=PROVIDER_TOKEN,
         currency='UZS',
         prices=[summa],
-        photo_url='https://www.google.com/url?sa=i&url=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fimage&psig=AOvVaw2U4lc8oBg0bGriopV3DRwA&ust=1677053281026000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCPD_ysWUpv0CFQAAAAAdAAAAABAb',
+        photo_url='https://www.google.com/url?sa=i&url=https%3A%2F%2Fstock.adobe.com%2Fsearch%2Fimages%3Fk%3Dintention&psig=AOvVaw3QKMdmFOkNVIM6O5Y8y3Cp&ust=1677329570718000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCMiJ6eaZrv0CFQAAAAAdAAAAABAE',
         photo_width=1000,
         photo_height=667,
         provider_data={}
@@ -41,5 +41,5 @@ async def pre_checkout_query(pre_checkout_q: PreCheckoutQuery):
     summa = pre_checkout_q.total_amount
     requests.post(url=f"{BASE_URL}/instructor/balanse/",
                   data={'summa': summa, 'instructor': pre_checkout_q.from_user.id})
-    await bot.send_message(chat_id=pre_checkout_q.from_user.id, text="To'lov amalga oshirildi!",
+    await bot.send_message(chat_id=pre_checkout_q.from_user.id, text="Tулов амалга оширилди!",
                            reply_markup=menu_instructor)

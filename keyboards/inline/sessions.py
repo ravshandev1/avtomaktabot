@@ -3,10 +3,10 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 sessions = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="Bo'lib o'tgan", callback_data='before')
+            InlineKeyboardButton(text="Бўлиб ўтган", callback_data='before')
         ],
         [
-            InlineKeyboardButton(text="Bo'lishi kerak", callback_data='after')
+            InlineKeyboardButton(text="Бўлиши керак", callback_data='after')
         ]
     ]
 )

@@ -11,10 +11,10 @@ async def start(message: types.Message):
     res = requests.get(url=f"{BASE_URL}/session/user/?id={message.from_user.id}")
     r = res.json()
     if r['message'] == "Client":
-        await message.answer("Kerakli bo'limni tanlang 👇", reply_markup=menu_client)
+        await message.answer("Керакли булимни танланг 👇", reply_markup=menu_client)
     elif r['message'] == "Instructor":
-        await message.answer("Kerakli bo'limni tanlang 👇", reply_markup=menu_instructor)
+        await message.answer("Керакли булимни танланг 👇", reply_markup=menu_instructor)
     else:
         await message.answer(
-            f"Salom, {message.from_user.full_name}!\nBotimizga xush kelibsiz. Botimizdan kim sifatida ro'yxatdan o'tmoqchisiz?",
+            f"Ассалому алайкум, {message.from_user.full_name}!\nIntention га хуш келибсиз. Ботимиздан ким сифатида руйхатдан утмокчисиз?",
             reply_markup=usertype)

@@ -3,15 +3,15 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 menu_instructor = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="👨‍✈️Profile"),
-            KeyboardButton(text="👨‍✈️Profileni o'zgartirish"),
+            KeyboardButton(text="🧑‍✈️Профил"),
+            KeyboardButton(text="🧑‍✈️Профилни ўзгартириш"),
         ],
         [
-            KeyboardButton(text="Balansni to'ldirish"),
-            KeyboardButton(text="Darslar ro'yxati"),
+            KeyboardButton(text="Балансни тўлдириш"),
+            KeyboardButton(text="🧑‍✈️Машғулотлар рўйхати"),
         ],
         [
-            KeyboardButton(text="Profileni o'chirish")
+            KeyboardButton(text="Профилни ўчириш")
         ]
     ],
     resize_keyboard=True
@@ -20,12 +20,12 @@ menu_instructor = ReplyKeyboardMarkup(
 menu_client = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Profile"),
-            KeyboardButton(text="Profileni o\'zgartirish"),
+            KeyboardButton(text="Профил"),
+            KeyboardButton(text="Профилни ўзгартириш"),
         ],
         [
-            KeyboardButton(text="Profileni o'chirish"),
-            KeyboardButton(text="Session"),
+            KeyboardButton(text="Профилни ўчириш"),
+            KeyboardButton(text="Машғулот"),
         ]
     ],
     resize_keyboard=True
@@ -33,11 +33,11 @@ menu_client = ReplyKeyboardMarkup(
 action_session = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Sessionlar ro\'yxati"),
-            KeyboardButton(text="Session yaratish"),
+            KeyboardButton(text="Машғулотлар рйхати"),
+            KeyboardButton(text="Машғулот яратиш"),
         ],
         [
-            KeyboardButton(text="Bosh menu")
+            KeyboardButton(text="Бош меню")
         ]
     ],
     resize_keyboard=True
@@ -46,11 +46,12 @@ action_session = ReplyKeyboardMarkup(
 sessions = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Bo'lib o'tgan"),
-            KeyboardButton(text="Bo'lishi kerak"),
+            KeyboardButton(text="Бўлиб утган"),
+            KeyboardButton(text="Бўлиши керак"),
         ],
         [
-            KeyboardButton(text="Bosh menu")
+            KeyboardButton(text="Бош меню"),
+            KeyboardButton(text="⬅️Oртга"),
         ]
     ],
     resize_keyboard=True
@@ -59,10 +60,10 @@ sessions = ReplyKeyboardMarkup(
 edit_session = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Sessionni o\'chirish'),
+            KeyboardButton(text='Машгулотни бекор килиш'),
         ],
         [
-            KeyboardButton(text="Bosh menu")
+            KeyboardButton(text="Бош меню")
         ]
     ],
     resize_keyboard=True

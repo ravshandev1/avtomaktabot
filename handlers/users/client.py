@@ -11,9 +11,9 @@ from keyboards.default.is_authenticated import menu_client, action_session, sess
 from keyboards.inline.sessions import create_after_sessions_for_cl, before_sessions_for_cl
 
 
-@dp.message_handler(text='Client')
+@dp.message_handler(text='Ўрганувчи')
 async def register(mes: Message):
-    await mes.answer('Ismingiz: ', reply_markup=ReplyKeyboardRemove())
+    await mes.answer('Исмингиз: ', reply_markup=ReplyKeyboardRemove())
     await ClientForm.ism.set()
 
 
@@ -22,7 +22,7 @@ async def name(mes: Message, state: FSMContext):
     await state.update_data(
         {'ism': mes.text}
     )
-    await mes.answer("Familiyangiz:")
+    await mes.answer("Фамилиянгиз:")
     await ClientForm.next()
 
 
@@ -32,7 +32,7 @@ async def surname(mes: Message, state: FSMContext):
         {"familiya": mes.text}
     )
     await mes.answer(
-        'Telefon raqamingizni kodi bilan 7 ta raqmini qushib yozing\nMasalan: <b>901234567</b> kurishnishda yozing')
+        'Teлефон ракамингизни коди билан 7 та ракамини кушиб ёзинг\nMасалан: <b>901234567</b>\nШунака куринишда булсин!')
     await ClientForm.next()
 
 
@@ -41,7 +41,7 @@ async def get_phone(mes: Message, state: FSMContext):
     await state.update_data(
         {'telefon': f"998{mes.text}"}
     )
-    await mes.answer('Pravaningiz bormi?', reply_markup=prava)
+    await mes.answer('Хайдовчилик гувохномангиз борми?', reply_markup=prava)
     await ClientForm.next()
 
 
@@ -57,36 +57,36 @@ async def get_cat(mes: Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(text="Profile")
+@dp.message_handler(text="Профил")
 async def get_profile(mes: Message):
     rp = requests.get(url=f"{BASE_URL}/client/{mes.from_user.id}/")
     res = rp.json()
-    text = f"Ismingiz: <b>{res['ism']}</b>\n"
-    text += f"Familiyangiz: <b>{res['familiya']}</b>\n"
-    text += f"Telefon raqamangiz: <b>{res['telefon']}</b>\n"
-    text += f"Pravangiz: <b>{res['prava']}</b>"
+    text = f"Исмингиз: <b>{res['ism']}</b>\n"
+    text += f"Фамилиянгиз: <b>{res['familiya']}</b>\n"
+    text += f"Телефон рақамангиз: <b>{res['telefon']}</b>\n"
+    text += f"Ҳайдовчилик гувоҳномангиз: <b>{res['prava']}</b>"
     await mes.answer(text, reply_markup=menu_client)
 
 
-@dp.message_handler(text="Profileni o'zgartirish")
+@dp.message_handler(text="Профилни ўзгартириш")
 async def edit_profile(mes: Message):
-    await mes.answer("Nimani o'zgartirmoqchisiz?", reply_markup=client)
+    await mes.answer("Нимани ўзгартирмоқчисиз?", reply_markup=client)
 
 
 @dp.callback_query_handler(text=['client:name', 'client:surname', 'client:phone', 'pra'])
 async def set_state(call: CallbackQuery):
     if call.data == 'client:name':
-        await call.message.answer("Ismingizni yozing:")
+        await call.message.answer("Исмингизни ёзинг:")
         await EditClient.ism.set()
     elif call.data == 'client:surname':
-        await call.message.answer("Familiyangizni yozing:")
+        await call.message.answer("Фамилиянгизни ёзинг:")
         await EditClient.familiya.set()
     elif call.data == 'client:phone':
         await call.message.answer(
-            "Telefon raqamingizni kodi bilan 7 ta raqmini qushib yozing\nMasalan: <b>901234567</b> kurishnishda yozing")
+            "Teлефон ракамингизни коди билан 7 та ракамини кушиб ёзинг\nMасалан: <b>901234567</b>\nШунака куринишда булсин!")
         await EditClient.telefon.set()
     elif call.data == 'pra':
-        await call.message.answer("Prava oldingizmi?", reply_markup=prava)
+        await call.message.answer("Ҳайдовчилик гувоҳномасини олдингизми?", reply_markup=prava)
         await EditClient.prava.set()
     await call.answer(cache_time=3)
 
@@ -96,7 +96,7 @@ async def set_name(mes: Message, state: FSMContext):
     data = {'ism': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Ismingiz {res['ism']} ga o'zgartirildi!", reply_markup=menu_client)
+    await mes.answer(f"Исмингиз {res['ism']} га ўзгартирилди!", reply_markup=menu_client)
     await state.finish()
 
 
@@ -105,7 +105,7 @@ async def set_surname(mes: Message, state: FSMContext):
     data = {'familiya': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Familiyangiz {res['familiya']} ga o'zgartirildi!", reply_markup=menu_client)
+    await mes.answer(f"Фамилиянгиз {res['familiya']} га ўзгартирилди!", reply_markup=menu_client)
     await state.finish()
 
 
@@ -114,7 +114,7 @@ async def set_phone(mes: Message, state: FSMContext):
     data = {'telefon': f"998{mes.text}"}
     rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Telefongiz {res['telefon']} ga o'zgartirildi!", reply_markup=menu_client)
+    await mes.answer(f"Телефонгиз {res['telefon']} га ўзгартирилди!", reply_markup=menu_client)
     await state.finish()
 
 
@@ -123,44 +123,44 @@ async def set_cat(mes: Message, state: FSMContext):
     data = {'prava': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Pravangiz {res['prava']} ga o'zgartirildi!", reply_markup=menu_client)
+    await mes.answer(f"Правангиз {res['prava']} га ўзгартирилди!", reply_markup=menu_client)
     await state.finish()
 
 
-@dp.message_handler(text='Session')
+@dp.message_handler(text="Машғулот")
 async def ses(mes: Message):
-    await mes.answer("Kerakli bo'limni tanlang 👇", reply_markup=action_session)
+    await mes.answer("Керакли бўлимни танланг 👇", reply_markup=action_session)
 
 
-@dp.message_handler(text='⬅️Ortga')
+@dp.message_handler(text='⬅️Oртга')
 async def ses(mes: Message):
-    await mes.answer("Kerakli bo'limni tanlang 👇", reply_markup=action_session)
+    await mes.answer("Керакли бўлимни танланг 👇", reply_markup=action_session)
 
 
-@dp.message_handler(text="Sessionlar ro'yxati")
+@dp.message_handler(text="Машғулотлар рйхати")
 async def session(mes: Message):
-    await mes.answer("Darslar ro'yxatini tanlang👇", reply_markup=sessions)
+    await mes.answer("Машғулотлар рўйхатини танланг👇", reply_markup=sessions)
 
 
-@dp.message_handler(text="Bo'lishi kerak")
+@dp.message_handler(text="Бўлиши керак")
 async def lesson(mes: Message):
     rp = requests.get(url=f"{BASE_URL}/session/{mes.from_user.id}")
     res = rp.json()
     row = ""
     for (i, se) in zip(range(1, 6), res['results']):
         row += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
-    await mes.answer(f"Natija {res['count']} ta\n" + row,
+    await mes.answer(f"Натижа {res['count']} та\n" + row,
                      reply_markup=create_after_sessions_for_cl(res, page=1))
 
 
-@dp.message_handler(text="Bo'lib o'tgan")
+@dp.message_handler(text="Бўлиб утган")
 async def lesson(mes: Message):
     rp = requests.get(url=f"{BASE_URL}/session/finished/{mes.from_user.id}")
     res = rp.json()
     row = ""
     for (i, se) in zip(range(1, 6), res['results']):
         row += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
-    await mes.answer(f"Natija {res['count']} ta\n" + row,
+    await mes.answer(f"Натижа {res['count']} та\n" + row,
                      reply_markup=before_sessions_for_cl(page=1))
 
 
@@ -175,10 +175,10 @@ async def action(call: CallbackQuery):
         row = ""
         for (i, se) in zip(range(1, 6), res['results']):
             row += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
-        await call.message.edit_text(f"Natija {res['count']} ta\n" + row,
+        await call.message.edit_text(f"Натижа {res['count']} тa\n" + row,
                                      reply_markup=create_after_sessions_for_cl(res, page + 1))
     else:
-        await call.answer("Bu oxirgi saxifa!")
+        await call.answer("Бу охирги сахифа!")
     await call.answer(cache_time=3)
 
 
@@ -193,10 +193,10 @@ async def action(call: CallbackQuery):
         row = ""
         for (i, se) in zip(range(1, 6), res['results']):
             row += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
-        await call.message.edit_text(f"Natija {res['count']} ta\n" + row,
+        await call.message.edit_text(f"Натижа {res['count']} тa\n" + row,
                                      reply_markup=create_after_sessions_for_cl(res, page - 1))
     else:
-        await call.answer("Bu birinchi saxifa!")
+        await call.answer("Бу биринчи сахифа!")
     await call.answer(cache_time=3)
 
 
@@ -211,10 +211,10 @@ async def action(call: CallbackQuery):
         row_2 = ""
         for (i, se) in zip(range(1, 6), res['results']):
             row_2 += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
-        await call.message.edit_text(f"Natija {res['count']} ta\n" + row_2,
+        await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
                                      reply_markup=before_sessions_for_cl(page + 1))
     else:
-        await call.answer("Bu oxirgi saxifa!")
+        await call.answer("Бу охирги сахифа!")
     await call.answer(cache_time=3)
 
 
@@ -229,10 +229,10 @@ async def action(call: CallbackQuery):
         row_2 = ""
         for (i, se) in zip(range(1, 6), res['results']):
             row_2 += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
-        await call.message.edit_text(f"Natija {res['count']} ta\n" + row_2,
+        await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
                                      reply_markup=before_sessions_for_cl(page - 1))
     else:
-        await call.answer("Bu birinchi saxifa!")
+        await call.answer("Бу биринчи сахифа!")
     await call.answer(cache_time=3)
 
 
@@ -242,31 +242,31 @@ async def daa(call: CallbackQuery, state: FSMContext):
     await state.update_data(
         {'session_id': s_id}
     )
-    await call.message.answer("Nimani o'zgartirmoqchisiz?", reply_markup=edit_session)
+    await call.message.answer("Нимани ўзгартирмоқчисиз?", reply_markup=edit_session)
 
 
-@dp.message_handler(text='Sessionni o\'chirish')
+@dp.message_handler(text='Машгулотни бекор килиш')
 async def delete(mes: Message, state: FSMContext):
     s_id = await state.get_data()
     rp = requests.delete(url=f"{BASE_URL}/session/detail/{s_id['session_id']}/")
     if rp.status_code == 204:
-        await mes.answer("Session muvaffaqiyatli o'chirildi", reply_markup=menu_client)
+        await mes.answer("Машғулот муваффақиятли ўчирилди", reply_markup=menu_client)
     else:
-        await mes.answer("Nimadir xato ketdi boshqatdan o'rinib ko'ring!")
+        await mes.answer("Нимадир хато кетди бошқатдан ўриниб кўринг!")
 
 
-@dp.message_handler(text="Bosh menu")
+@dp.message_handler(text="Бош меню")
 async def menu(mes: Message):
-    await mes.answer("Kerakli bo'limni tanlang 👇", reply_markup=menu_client)
+    await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client)
 
 
-@dp.message_handler(text="Profileni o'chirish")
+@dp.message_handler(text="Профилни ўчириш")
 async def delete_profile(mes: Message):
     rp = requests.delete(url=f"{BASE_URL}/client/delete/{mes.from_user.id}/")
     if rp.status_code == 204:
-        await mes.answer("Profilingiz muvaffaqiyatli o'chirildi", reply_markup=ReplyKeyboardRemove())
+        await mes.answer("Профилингиз муваффақиятли ўчирилди", reply_markup=ReplyKeyboardRemove())
     else:
-        await mes.answer("Nimadir xato ketdi qaytadan o'rinib ko'ring!")
+        await mes.answer("Нимадир хато кетди қайтадан ўриниб кўринг!")
 
 
 @dp.callback_query_handler(text=['juda_yomon', 'yomon', 'qoniqarli', 'yaxshi', 'zur'])

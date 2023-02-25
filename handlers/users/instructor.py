@@ -11,10 +11,10 @@ from keyboards.inline.sessions import sessions
 import re
 
 
-@dp.message_handler(text='Instructor')
+@dp.message_handler(text='Инструктор')
 async def register(mes: Message):
     await InstructorForm.ism.set()
-    await mes.answer("Ismingiz:", reply_markup=ReplyKeyboardRemove())
+    await mes.answer("Исмингиз:", reply_markup=ReplyKeyboardRemove())
 
 
 @dp.message_handler(state=InstructorForm.ism)
@@ -22,7 +22,7 @@ async def ism(mes: Message, state: FSMContext):
     await state.update_data(
         {"ism": mes.text}
     )
-    await mes.answer("Familiyangiz:")
+    await mes.answer("Фамилиянгиз:")
     await InstructorForm.next()
 
 
@@ -32,7 +32,7 @@ async def familiya(mes: Message, state: FSMContext):
         {'familiya': mes.text}
     )
     await mes.answer(
-        'Telefon raqamingizni kodi bilan 7 ta raqmini qushib yozing\nMasalan: <b>901234567</b> kurishnishda yozing')
+        'Телефон рақамингизни коди билан 7 та рақмини қўшиб ёзинг\nМасалан: <b>901234567</b> кўришнишда ёзинг')
     await InstructorForm.next()
 
 
@@ -41,7 +41,7 @@ async def telefon(mes: Message, state: FSMContext):
     await state.update_data(
         {'telefon': f"998{mes.text}"}
     )
-    await mes.answer("Jinsingiz: ", reply_markup=genders)
+    await mes.answer("Жинсингиз: ", reply_markup=genders)
     await InstructorForm.next()
 
 
@@ -50,7 +50,7 @@ async def gender(mes: Message, state: FSMContext):
     await state.update_data(
         {'jins': mes.text}
     )
-    await mes.answer("Yashash tumaningiz: ", reply_markup=regions())
+    await mes.answer("Яшаш туманингиз: ", reply_markup=regions())
     await InstructorForm.next()
 
 
@@ -59,7 +59,7 @@ async def region(mes: Message, state: FSMContext):
     await state.update_data(
         {'tuman': mes.text}
     )
-    await mes.answer("Qaysi toifa instruktirisiz: ", reply_markup=categories())
+    await mes.answer("Қайси тоифа инструктирисиз: ", reply_markup=categories())
     await InstructorForm.next()
 
 
@@ -74,7 +74,7 @@ async def category(mes: Message, state: FSMContext):
     markup = ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
     for i in rg:
         markup.insert(KeyboardButton(text=f"{i['nomi']}"))
-    await mes.answer("Mashinani tanlang: ", reply_markup=markup)
+    await mes.answer("Машинани танланг: ", reply_markup=markup)
     await InstructorForm.next()
 
 
@@ -84,7 +84,7 @@ async def car(mes: Message, state: FSMContext):
         {'moshina': mes.text}
     )
     await mes.answer(
-        "Mashinangiz nomerini yozing\nMasalan: <b>01 A 111 AA</b> yoki <b>01 111 AAA</b> ko'rinishida bulsin",
+        "Мошинангиз номерини ёзинг\nМасалан: <b>01 A 111 AA</b> ёки <b>01 111 AAA</b> кўринишида булсин",
         reply_markup=ReplyKeyboardRemove())
     await InstructorForm.next()
 
@@ -102,38 +102,38 @@ async def create_instructor(mes: Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(text="👨‍✈️Profile")
+@dp.message_handler(text="🧑‍✈️Профил")
 async def get_profile(mes: Message):
     rp = requests.get(url=f"{BASE_URL}/instructor/{mes.from_user.id}/")
     res = rp.json()
-    text = f"Ismingiz: <b>{res['ism']}</b>\n"
-    text += f"Familiyangiz: <b>{res['familiya']}</b>\n"
-    text += f"Telefon raqamangiz: <b>{res['telefon']}</b>\n"
-    text += f"Moshinagiz: <b>{res['moshina']}</b>\n"
-    text += f"Yashash tumaningiz: <b>{res['tuman']}</b>\n"
-    text += f"Toifangiz: <b>{res['toifa']}</b>\n"
-    text += f"Balansizgiz: <b>{res['balans']} so'm</b>\n"
-    text += f"Moshinayiz nomeri: <b>{res['nomeri']}</b>\n"
+    text = f"Исмингиз: <b>{res['ism']}</b>\n"
+    text += f"Фамилиянгиз: <b>{res['familiya']}</b>\n"
+    text += f"Телефон рақамангиз: <b>{res['telefon']}</b>\n"
+    text += f"Мошинагиз: <b>{res['moshina']}</b>\n"
+    text += f"Яшаш туманингиз: <b>{res['tuman']}</b>\n"
+    text += f"Тоифангиз: <b>{res['toifa']}</b>\n"
+    text += f"Балансизгиз: <b>{res['balans']} so'm</b>\n"
+    text += f"Мошинангиз номери: <b>{res['nomeri']}</b>\n"
     await mes.answer(text, reply_markup=menu_instructor)
 
 
-@dp.message_handler(text='👨‍✈️Profileni o\'zgartirish')
+@dp.message_handler(text="🧑‍✈️Профилни ўзгартириш")
 async def edit_profile(mes: Message):
-    await mes.answer("Nimani o'zgartirmoqchisiz?", reply_markup=instructor)
+    await mes.answer("Нимани ўзгартирмоқчисиз?", reply_markup=instructor)
 
 
 @dp.callback_query_handler(
     text=['instructor:name', 'instructor:surname', 'instructor:phone', 'car', 'number', 'region', 'cat'])
 async def set_state(call: CallbackQuery):
     if call.data == "instructor:name":
-        await call.message.answer("Ismingizni yozing:")
+        await call.message.answer("Исмингизни ёзинг:")
         await EditInstructor.ism.set()
     elif call.data == "instructor:surname":
-        await call.message.answer("Familiyangizni yozing:")
+        await call.message.answer("Фамилиянгизни ёзинг:")
         await EditInstructor.familiya.set()
     elif call.data == "instructor:phone":
         await call.message.answer(
-            "Telefon raqamingizni kodi bilan 7 ta raqmini qushib yozing\nMasalan: <b>901234567</b> kurishnishda yozing")
+            "Телефон рақамингизни коди билан 7 та рақмини қўшиб ёзинг\nМасалан: <b>901234567</b> кўришнишда ёзинг")
         await EditInstructor.telefon.set()
     elif call.data == "car":
         res = requests.get(url=f"{BASE_URL}/instructor/cars/")
@@ -141,17 +141,17 @@ async def set_state(call: CallbackQuery):
         markup = ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
         for i in rg:
             markup.insert(KeyboardButton(text=f"{i['nomi']}"))
-        await call.message.answer("Moshina nomini tanlang:", reply_markup=markup)
+        await call.message.answer("Мошина номини танланг:", reply_markup=markup)
         await EditInstructor.moshina.set()
     elif call.data == "region":
-        await call.message.answer("Yashash manzilingizni tanlang", reply_markup=regions())
+        await call.message.answer("Яшаш манзилингизни танланг", reply_markup=regions())
         await EditInstructor.tuman.set()
     elif call.data == 'cat':
-        await call.message.answer("Toifani tanlang:", reply_markup=categories())
+        await call.message.answer("Тоифани танланг:", reply_markup=categories())
         await EditInstructor.toifa.set()
     elif call.data == "number":
         await call.message.answer(
-            "Mashinangiz nomerini yozing\nMasalan: <b>01 A 111 AA</b> yoki <b>01 111 AAA</b> kurinishida bulsin")
+            "Мошинангиз номерини ёзинг\nМасалан: <b>01 A 111 AA</b> ёки <b>01 111 AAA</b> кўринишида булсин")
         await EditInstructor.nomeri.set()
     await call.answer(cache_time=3)
 
@@ -161,7 +161,7 @@ async def set_name(mes: Message, state: FSMContext):
     data = {'ism': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Ismingiz <b>{res['ism']}</b> ga o'zgartirildi!", reply_markup=menu_instructor)
+    await mes.answer(f"Исмингиз <b>{res['ism']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 
@@ -170,7 +170,7 @@ async def set_surname(mes: Message, state: FSMContext):
     data = {'familiya': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Familiyangiz <b>{res['familiya']}</b> ga o'zgartirildi!", reply_markup=menu_instructor)
+    await mes.answer(f"Фамилиянгиз <b>{res['familiya']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 
@@ -179,7 +179,7 @@ async def set_phone(mes: Message, state: FSMContext):
     data = {'telefon': f"998{mes.text}"}
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Telefongiz <b>{res['telefon']}</b> ga o'zgartirildi!", reply_markup=menu_instructor)
+    await mes.answer(f"Телефонгиз <b>{res['telefon']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 
@@ -188,7 +188,7 @@ async def set_region(mes: Message, state: FSMContext):
     data = {'tuman': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Yashash tumaningiz <b>{res['tuman']}</b> ga o'zgartirildi!", reply_markup=menu_instructor)
+    await mes.answer(f"Яшаш туманингиз <b>{res['tuman']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 
@@ -197,7 +197,7 @@ async def set_cat(mes: Message, state: FSMContext):
     data = {'toifa': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Toifaningiz <b>{res['toifa']}</b> ga o'zgartirildi!", reply_markup=menu_instructor)
+    await mes.answer(f"Тоифанингиз <b>{res['toifa']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 
@@ -207,7 +207,7 @@ async def set_cat(mes: Message, state: FSMContext):
     data = {'nomeri': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Moshinangiz raqami <b>{res['nomeri']}</b> ga o'zgartirildi!", reply_markup=menu_instructor)
+    await mes.answer(f"Мошинангиз рақами <b>{res['nomeri']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 
@@ -216,10 +216,10 @@ async def set_cat(mes: Message, state: FSMContext):
     data = {'moshina': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Moshinangiz <b>{res['moshina']}</b> ga o'zgartirildi!", reply_markup=menu_instructor)
+    await mes.answer(f"Мошинангиз <b>{res['moshina']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 
-@dp.message_handler(text="Darslar ro'yxati")
+@dp.message_handler(text="🧑‍✈️Машғулотлар рўйхати")
 async def get_sessions(mes: Message):
-    await mes.answer("Darslar ro'yxatini tanlang👇", reply_markup=sessions)
+    await mes.answer("Машғулотлар рўйхатини танланг👇", reply_markup=sessions)

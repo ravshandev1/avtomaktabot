@@ -5,8 +5,8 @@ from data.config import BASE_URL
 usertype = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Client'),
-            KeyboardButton(text='Instructor'),
+            KeyboardButton(text='Ўрганувчи'),
+            KeyboardButton(text='Инструктор'),
         ]
     ],
     resize_keyboard=True
@@ -14,8 +14,8 @@ usertype = ReplyKeyboardMarkup(
 prava = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Bor'),
-            KeyboardButton(text="Yo'q"),
+            KeyboardButton(text='Бор'),
+            KeyboardButton(text="Юқ"),
         ],
     ],
     resize_keyboard=True
@@ -23,8 +23,8 @@ prava = ReplyKeyboardMarkup(
 where = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Avtomaktabdan'),
-            KeyboardButton(text="Uydan"),
+            KeyboardButton(text='Автомактабдан'),
+            KeyboardButton(text="Уйдан"),
         ],
     ],
     resize_keyboard=True
@@ -32,8 +32,8 @@ where = ReplyKeyboardMarkup(
 genders = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Erkak'),
-            KeyboardButton(text='Ayol'),
+            KeyboardButton(text='Еркак'),
+            KeyboardButton(text='Аёл'),
         ]
     ],
     resize_keyboard=True
@@ -41,8 +41,8 @@ genders = ReplyKeyboardMarkup(
 payment = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Naqd'),
-            KeyboardButton(text='Karta'),
+            KeyboardButton(text='Накд'),
+            KeyboardButton(text='Карта'),
         ]
     ],
     resize_keyboard=True
@@ -50,7 +50,7 @@ payment = ReplyKeyboardMarkup(
 str_btn = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Boshlash')
+            KeyboardButton(text='Бошлаш')
         ]
     ],
     resize_keyboard=True
@@ -58,7 +58,7 @@ str_btn = ReplyKeyboardMarkup(
 stp_btn = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Tugatish')
+            KeyboardButton(text='Тугатиш')
         ]
     ],
     resize_keyboard=True
