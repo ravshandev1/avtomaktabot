@@ -27,10 +27,11 @@ async def balans(mes: Message, state: FSMContext):
         provider_token=PROVIDER_TOKEN,
         currency='UZS',
         prices=[summa],
-        photo_url='https://www.google.com/url?sa=i&url=https%3A%2F%2Fstock.adobe.com%2Fsearch%2Fimages%3Fk%3Dintention&psig=AOvVaw3QKMdmFOkNVIM6O5Y8y3Cp&ust=1677329570718000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCMiJ6eaZrv0CFQAAAAAdAAAAABAE',
-        photo_width=1000,
-        photo_height=667,
-        provider_data={}
+        photo_url='https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2Favtomaktab.uz%2F&psig=AOvVaw39yzNP4rYtQlSuAuM-2QY1&ust=1677581237693000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCMjwi6zDtf0CFQAAAAAdAAAAABAK',
+        photo_width=360,
+        photo_height=360,
+        provider_data={"SERVICE_ID": 26787, "MERCHANT_ID": 18113, "SECRET_KEY": "ljCXKrnOnZf",
+                       "merchant user id:": 30614}
     )
     await state.finish()
 
