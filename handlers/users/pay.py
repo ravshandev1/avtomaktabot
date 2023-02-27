@@ -5,6 +5,7 @@ from data.config import PROVIDER_TOKEN, BASE_URL
 from loader import bot, dp
 from keyboards.default.is_authenticated import menu_instructor
 import requests
+from aiogram.types.message import ContentType
 
 
 @dp.message_handler(text="Балансни тўлдириш")
@@ -39,8 +40,12 @@ async def balans(mes: Message, state: FSMContext):
 @dp.pre_checkout_query_handler(lambda query: True)
 async def pre_checkout_query(pre_checkout_q: PreCheckoutQuery):
     await bot.answer_pre_checkout_query(pre_checkout_q.id, ok=True)
-    summa = pre_checkout_q.total_amount
+
+
+@dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
+async def success(mes: Message):
+    summa = mes.successful_payment.total_amount
     requests.post(url=f"{BASE_URL}/instructor/balanse/",
-                  data={'summa': summa, 'instructor': pre_checkout_q.from_user.id})
-    await bot.send_message(chat_id=pre_checkout_q.from_user.id, text="Tулов амалга оширилди!",
+                  data={'summa': summa, 'instructor': mes.from_user.id})
+    await bot.send_message(chat_id=mes.from_user.id, text="Tулов амалга оширилди!",
                            reply_markup=menu_instructor)
