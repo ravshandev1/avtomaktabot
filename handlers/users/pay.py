@@ -49,3 +49,4 @@ async def success(mes: Message):
                   data={'summa': summa, 'instructor': mes.from_user.id})
     await bot.send_message(chat_id=mes.from_user.id, text="Tулов амалга оширилди!",
                            reply_markup=menu_instructor)
+    await mes.delete()
