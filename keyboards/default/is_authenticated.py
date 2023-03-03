@@ -33,7 +33,7 @@ menu_client = ReplyKeyboardMarkup(
 action_session = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Машғулотлар рйхати"),
+            KeyboardButton(text="Машғулотлар рўйхати"),
             KeyboardButton(text="Машғулот яратиш"),
         ],
         [
@@ -60,7 +60,7 @@ sessions = ReplyKeyboardMarkup(
 edit_session = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Машгулотни бекор килиш'),
+            KeyboardButton(text='Машғулотни бекор килиш'),
         ],
         [
             KeyboardButton(text="Бош меню")
