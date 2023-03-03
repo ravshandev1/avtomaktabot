@@ -137,7 +137,7 @@ async def ses(mes: Message):
     await mes.answer("Керакли бўлимни танланг 👇", reply_markup=action_session)
 
 
-@dp.message_handler(text="Машғулотлар рйхати")
+@dp.message_handler(text="Машғулотлар рўйхати")
 async def session(mes: Message):
     await mes.answer("Машғулотлар рўйхатини танланг👇", reply_markup=sessions)
 
@@ -245,7 +245,7 @@ async def daa(call: CallbackQuery, state: FSMContext):
     await call.message.answer("Нимани ўзгартирмоқчисиз?", reply_markup=edit_session)
 
 
-@dp.message_handler(text='Машгулотни бекор килиш')
+@dp.message_handler(text='Машғулотни бекор килиш')
 async def delete(mes: Message, state: FSMContext):
     s_id = await state.get_data()
     rp = requests.delete(url=f"{BASE_URL}/session/detail/{s_id['session_id']}/")
