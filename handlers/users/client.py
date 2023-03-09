@@ -260,6 +260,16 @@ async def menu(mes: Message):
     await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client)
 
 
+@dp.message_handler(text="Нархлар")
+async def price(mes: Message):
+    r = requests.get(url=f"{BASE_URL}/session/price/list/")
+    pr = r.json()
+    text = ""
+    for i in pr:
+        text += f"{i['category']} тоифа - {i['price']} сўм соатига\n"
+    await mes.answer(text)
+
+
 @dp.message_handler(text="Профилни ўчириш")
 async def delete_profile(mes: Message):
     rp = requests.delete(url=f"{BASE_URL}/client/delete/{mes.from_user.id}/")

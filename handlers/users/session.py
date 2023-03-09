@@ -193,9 +193,9 @@ async def get_payent_method(mes: Message, state: FSMContext):
     del data['soat']
     del data['kun']
     rp = requests.post(url=f"{BASE_URL}/session/", data=data)
-    await notify(data['ins_tg_id'])
     if rp.status_code == 200:
         await mes.answer("Машғулот муваффақиятли яратилди!", reply_markup=menu_client)
+        await notify(data['ins_tg_id'])
     else:
         await mes.answer("Хато кетди қайтадан ўриниб кўринг!", reply_markup=menu_client)
     await state.finish()
@@ -272,31 +272,34 @@ async def get_ses(call: CallbackQuery, state: FSMContext):
         await SessionEdit.start.set()
     else:
         await call.message.answer("Балансингиз 15 000 сўмдан кам Илтимос балансингизни тўлдиринг!!!")
+    await call.answer(cache_time=3)
 
 
 @dp.message_handler(text='Бошлаш', state=SessionEdit.start)
 async def start(mes: Message):
     str_obj()
-    await mes.answer("Вақт кетди\nТугатишни тўгмасини босиш есингиздан чиқмасин!!!", reply_markup=stp_btn)
+    await mes.answer("Вақт кетди\nТўгатишни тўгмасини босиш есингиздан чиқмасин!!!", reply_markup=stp_btn)
     await SessionEdit.next()
 
 
 @dp.message_handler(text='Тугатиш', state=SessionEdit.finish)
 async def finish(mes: Message, state: FSMContext):
     s_id = await state.get_data()
-    r = requests.get(url=f"{BASE_URL}/session/price/")
+    r = requests.get(url=f"{BASE_URL}/session/price/?s_id={s_id['session_id']}")
     res = r.json()
-    price = round((res[0]['price'] / 60) / 100) * 100
+    price = round((res['price'] / 60) / 100) * 100
     minute = stp_obj()
     if minute > 120:
         minute = 120
         await mes.answer("Тугатишни босиш есингиздан чиқиб кетди вақтни 2 соат бўлганида тугатдим!!!")
     summa = minute * price
+    if res['qayerdan'] == 'Уйдан':
+        summa += 15000
     rp = requests.patch(url=f"{BASE_URL}/session/detail/{s_id['session_id']}/?ins={mes.from_user.id}",
                         data={'summa': summa})
     rs = rp.json()
-    await mes.answer(f"{summa} сўм булди\nСизнинг балансенингиз {rs['balance']} сўм", reply_markup=menu_instructor)
-    await dp.bot.send_message(rs['client'], "Инстркторга 1 дан 5 гача бўлган қийматда баҳоланг!",
+    await mes.answer(f"{summa} сўм бўлди\nСизнинг балансенингиз {rs['balance']} сўм", reply_markup=menu_instructor)
+    await dp.bot.send_message(rs['client'], f"{summa} сўм бўлди\nИнстркторга 1 дан 5 гача бўлган қийматда баҳоланг!",
                               reply_markup=rate)
     requests.post(url=f"{BASE_URL}/instructor/rating/", data={'instructor': mes.from_user.id, 'client': rs['client']})
     await state.finish()

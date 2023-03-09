@@ -26,6 +26,9 @@ menu_client = ReplyKeyboardMarkup(
         [
             KeyboardButton(text="Профилни ўчириш"),
             KeyboardButton(text="Машғулот"),
+        ],
+        [
+            KeyboardButton(text='Нархлар')
         ]
     ],
     resize_keyboard=True
