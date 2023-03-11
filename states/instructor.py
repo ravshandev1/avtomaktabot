@@ -10,6 +10,7 @@ class InstructorForm(StatesGroup):
     toifa = State()
     moshina = State()
     nomeri = State()
+    location = State()
 
 
 class EditInstructor(StatesGroup):
@@ -21,6 +22,7 @@ class EditInstructor(StatesGroup):
     toifa = State()
     moshina = State()
     nomeri = State()
+    location = State()
 
 
 class Balans(StatesGroup):

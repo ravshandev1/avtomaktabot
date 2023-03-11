@@ -5,7 +5,7 @@ from states.instructor import InstructorForm, EditInstructor
 from aiogram.dispatcher import FSMContext
 from loader import dp
 from keyboards.default.register import genders, regions, categories
-from keyboards.default.is_authenticated import menu_instructor
+from keyboards.default.is_authenticated import menu_instructor, location_btn
 from keyboards.inline.edit_profile import instructor
 from keyboards.inline.sessions import sessions
 import re
@@ -95,7 +95,14 @@ async def create_instructor(mes: Message, state: FSMContext):
     await state.update_data(
         {'nomeri': mes.text, 'telegram_id': mes.from_user.id}
     )
+    await mes.answer("Ўзингизга қулай бўлган манзилни юборинг!", reply_markup=location_btn)
+    await InstructorForm.next()
+
+
+@dp.message_handler(state=InstructorForm.location, content_types='location')
+async def get_location(mes: Message, state: FSMContext):
     data = await state.get_data()
+    data['location'] = f"{mes.location['longitude']}, {mes.location['latitude']}"
     res = requests.post(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     r = res.json()
     await mes.answer(f"{mes.from_user.first_name} {r['message']}", reply_markup=menu_instructor)
@@ -123,7 +130,7 @@ async def edit_profile(mes: Message):
 
 
 @dp.callback_query_handler(
-    text=['instructor:name', 'instructor:surname', 'instructor:phone', 'car', 'number', 'region', 'cat'])
+    text=['instructor:name', 'instructor:surname', 'instructor:phone', 'car', 'number', 'region', 'cat', 'locate'])
 async def set_state(call: CallbackQuery):
     if call.data == "instructor:name":
         await call.message.answer("Исмингизни ёзинг:")
@@ -153,6 +160,10 @@ async def set_state(call: CallbackQuery):
         await call.message.answer(
             "Мошинангиз номерини ёзинг\nМасалан: <b>01 A 111 AA</b> ёки <b>01 111 AAA</b> кўринишида булсин")
         await EditInstructor.nomeri.set()
+    elif call.data == "locate":
+        await call.message.answer(
+            "Манзилингизни юборинг!", reply_markup=location_btn)
+        await EditInstructor.location.set()
     await call.answer(cache_time=3)
 
 
@@ -171,6 +182,14 @@ async def set_surname(mes: Message, state: FSMContext):
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
     await mes.answer(f"Фамилиянгиз <b>{res['familiya']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
+    await state.finish()
+
+
+@dp.message_handler(content_types='location', state=EditInstructor.location)
+async def set_surname(mes: Message, state: FSMContext):
+    data = {'location': f"{mes.location['latitude']}, {mes.location['longitude']}"}
+    requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
+    await mes.answer(f"Манзилингиз ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 

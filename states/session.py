@@ -7,6 +7,7 @@ class SessionForm(StatesGroup):
     moshina = State()
     instructor = State()
     qayerdan = State()
+    yes_or_no = State()
     kun = State()
     vaqt = State()
     tulov_turi = State()

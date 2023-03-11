@@ -1,7 +1,15 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 import requests
 from data.config import BASE_URL
-
+locate = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text='Ҳа мақул'),
+            KeyboardButton(text='Йўқ уйимдан олиб кетсин'),
+        ]
+    ],
+    resize_keyboard=True
+)
 usertype = ReplyKeyboardMarkup(
     keyboard=[
         [
@@ -23,7 +31,7 @@ prava = ReplyKeyboardMarkup(
 where = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Автомактабдан'),
+            KeyboardButton(text='Инструктор манзилидан'),
             KeyboardButton(text="Уйдан"),
         ],
     ],

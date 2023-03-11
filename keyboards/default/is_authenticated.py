@@ -11,7 +11,8 @@ menu_instructor = ReplyKeyboardMarkup(
             KeyboardButton(text="🧑‍✈️Машғулотлар рўйхати"),
         ],
         [
-            KeyboardButton(text="Профилни ўчириш")
+            KeyboardButton(text="Профилни ўчириш"),
+            KeyboardButton(text='Нархлар')
         ]
     ],
     resize_keyboard=True
@@ -71,3 +72,9 @@ edit_session = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
+
+location_btn = ReplyKeyboardMarkup(keyboard=[
+    [
+        KeyboardButton(text='Манзилингизни юборинг!', request_location=True)
+    ]
+], resize_keyboard=True)
