@@ -4,9 +4,10 @@ import requests
 from data.config import BASE_URL
 from keyboards.default.is_authenticated import menu_instructor, menu_client
 from keyboards.default.register import usertype
+from aiogram.dispatcher.filters.builtin import CommandStart
 
 
-@dp.message_handler(state=None)
+@dp.message_handler(CommandStart())
 async def start(message: types.Message):
     res = requests.get(url=f"{BASE_URL}/session/user/?id={message.from_user.id}")
     r = res.json()

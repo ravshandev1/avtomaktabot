@@ -45,6 +45,12 @@ async def get_phone(mes: Message, state: FSMContext):
     await ClientForm.next()
 
 
+@dp.message_handler(state=ClientForm.telefon, content_types='text')
+async def st(mes: Message):
+    await mes.answer("Телефон рақамни нотўғри киритдингиз!\nТелефон рақамингизни қайтадан киритинг!")
+    await ClientForm.telefon.set()
+
+
 @dp.message_handler(state=ClientForm.prava)
 async def get_cat(mes: Message, state: FSMContext):
     await state.update_data(

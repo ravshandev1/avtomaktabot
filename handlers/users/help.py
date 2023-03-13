@@ -1,13 +1,9 @@
 from aiogram import types
-from aiogram.dispatcher.filters.builtin import CommandHelp
-
 from loader import dp
+from aiogram.dispatcher import FSMContext
 
 
-@dp.message_handler(CommandHelp())
-async def bot_help(message: types.Message):
-    text = ("Buyruqlar: ",
-            "/start - Botni ishga tushirish",
-            "/help - Yordam")
-
-    await message.answer("\n".join(text))
+@dp.message_handler(state='*')
+async def bot_help(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer('Бот қайта ишга тушурилди!\n/start ни босинг!')

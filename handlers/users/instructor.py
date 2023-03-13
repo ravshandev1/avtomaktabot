@@ -45,6 +45,12 @@ async def telefon(mes: Message, state: FSMContext):
     await InstructorForm.next()
 
 
+@dp.message_handler(state=InstructorForm.telefon, content_types='text')
+async def st(mes: Message):
+    await mes.answer("Телефон рақамни нотўғри киритдингиз!\nТелефон рақамингизни қайтадан киритинг!")
+    await InstructorForm.telefon.set()
+
+
 @dp.message_handler(state=InstructorForm.jins)
 async def gender(mes: Message, state: FSMContext):
     await state.update_data(
@@ -97,6 +103,13 @@ async def create_instructor(mes: Message, state: FSMContext):
     )
     await mes.answer("Ўзингизга қулай бўлган манзилни юборинг!", reply_markup=location_btn)
     await InstructorForm.next()
+
+
+@dp.message_handler(state=InstructorForm.nomeri, content_types='text')
+async def st(mes: Message):
+    await mes.answer(
+        "Мошина рақамни нотўғри киритдингиз!\nҚайтадан киритинг\nМасалан: <b>01 A 111 AA</b> ёки <b>01 111 AAA</b> кўринишида булсин")
+    await InstructorForm.nomeri.set()
 
 
 @dp.message_handler(state=InstructorForm.location, content_types='location')
