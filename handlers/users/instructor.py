@@ -112,13 +112,23 @@ async def st(mes: Message):
     await InstructorForm.nomeri.set()
 
 
-@dp.message_handler(text="Нарх ва фоизлар")
+@dp.message_handler(text="Нарх")
 async def price(mes: Message):
     r = requests.get(url=f"{BASE_URL}/session/price/list/")
     pr = r.json()
     text = ""
     for i in pr:
-        text += f"{i['category']} тоифа {i['percent']} %- {i['price']} сўм соатига\n"
+        text += f"{i['category']} тоифа - {i['price']} сўм соатига\n"
+    await mes.answer(text)
+
+
+@dp.message_handler(text="Фоиз")
+async def price(mes: Message):
+    r1 = requests.get(url=f"{BASE_URL}/session/percent/")
+    p1 = r1.json()
+    text = ""
+    for j in p1:
+        text += f"Инструктордан олинадиган фоизи {j['percent']} %\n"
     await mes.answer(text)
 
 

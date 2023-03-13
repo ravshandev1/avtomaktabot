@@ -12,8 +12,11 @@ menu_instructor = ReplyKeyboardMarkup(
         ],
         [
             KeyboardButton(text="Профилни ўчириш"),
-            KeyboardButton(text='Нарх ва фоизлар')
-        ]
+            KeyboardButton(text='Нарх'),
+        ],
+        [
+            KeyboardButton(text="Фоиз"),
+        ],
     ],
     resize_keyboard=True
 )
