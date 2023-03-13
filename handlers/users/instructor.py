@@ -112,6 +112,16 @@ async def st(mes: Message):
     await InstructorForm.nomeri.set()
 
 
+@dp.message_handler(text="Нарх ва фоизлар")
+async def price(mes: Message):
+    r = requests.get(url=f"{BASE_URL}/session/price/list/")
+    pr = r.json()
+    text = ""
+    for i in pr:
+        text += f"{i['category']} тоифа {i['percent']} %- {i['price']} сўм соатига\n"
+    await mes.answer(text)
+
+
 @dp.message_handler(state=InstructorForm.location, content_types='location')
 async def get_location(mes: Message, state: FSMContext):
     data = await state.get_data()
