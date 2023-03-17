@@ -1,15 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 import requests
 from data.config import BASE_URL
-locate = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Ҳа мақул'),
-            KeyboardButton(text='Йўқ уйимдан олиб кетсин'),
-        ]
-    ],
-    resize_keyboard=True
-)
+
 usertype = ReplyKeyboardMarkup(
     keyboard=[
         [
@@ -19,20 +11,20 @@ usertype = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
-prava = ReplyKeyboardMarkup(
+card_btn = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Бор'),
-            KeyboardButton(text="Юқ"),
+            KeyboardButton(text='Ҳа'),
+            KeyboardButton(text="Йўқ"),
         ],
     ],
     resize_keyboard=True
 )
-where = ReplyKeyboardMarkup(
+prava = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Инструктор манзилидан'),
-            KeyboardButton(text="Уйдан"),
+            KeyboardButton(text='Бор'),
+            KeyboardButton(text="Йўқ"),
         ],
     ],
     resize_keyboard=True
@@ -42,15 +34,6 @@ genders = ReplyKeyboardMarkup(
         [
             KeyboardButton(text='Еркак'),
             KeyboardButton(text='Аёл'),
-        ]
-    ],
-    resize_keyboard=True
-)
-payment = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Накд'),
-            KeyboardButton(text='Карта'),
         ]
     ],
     resize_keyboard=True
@@ -93,3 +76,33 @@ def categories():
             KeyboardButton(text=f"{i['toifa']}")
         )
     return keyboard
+
+
+def text_client_reg():
+    res = requests.get(url=f"{BASE_URL}/client/text-r/1/")
+    cats = res.json()
+    return cats
+
+
+def text_client_up():
+    res = requests.get(url=f"{BASE_URL}/client/text-u/1/")
+    cats = res.json()
+    return cats
+
+
+def text_ins_reg():
+    res = requests.get(url=f"{BASE_URL}/instructor/text-r/1/")
+    cats = res.json()
+    return cats
+
+
+def text_ins_up():
+    res = requests.get(url=f"{BASE_URL}/instructor/text-u/1/")
+    cats = res.json()
+    return cats
+
+
+def text_ses():
+    res = requests.get(url=f"{BASE_URL}/session/text/1/")
+    cats = res.json()
+    return cats

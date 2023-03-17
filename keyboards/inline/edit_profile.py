@@ -28,6 +28,7 @@ instructor = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(text='Мошинани номерини', callback_data='number'),
             InlineKeyboardButton(text='Манзилини', callback_data='locate'),
+            InlineKeyboardButton(text='Тўлов турини', callback_data='cart'),
         ]
     ]
 )

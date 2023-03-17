@@ -5,7 +5,7 @@ from data.config import BASE_URL
 from states.client import ClientForm, EditClient
 from aiogram.dispatcher import FSMContext
 from loader import dp
-from keyboards.default.register import prava
+from keyboards.default.register import prava, text_client_reg, text_client_up
 from keyboards.inline.edit_profile import client
 from keyboards.default.is_authenticated import menu_client, action_session, sessions, edit_session
 from keyboards.inline.sessions import create_after_sessions_for_cl, before_sessions_for_cl
@@ -13,7 +13,7 @@ from keyboards.inline.sessions import create_after_sessions_for_cl, before_sessi
 
 @dp.message_handler(text='Ўрганувчи')
 async def register(mes: Message):
-    await mes.answer('Исмингиз: ', reply_markup=ReplyKeyboardRemove())
+    await mes.answer(text_client_reg()['ism'], reply_markup=ReplyKeyboardRemove())
     await ClientForm.ism.set()
 
 
@@ -22,7 +22,7 @@ async def name(mes: Message, state: FSMContext):
     await state.update_data(
         {'ism': mes.text}
     )
-    await mes.answer("Фамилиянгиз:")
+    await mes.answer(text_client_reg()['familiya'])
     await ClientForm.next()
 
 
@@ -31,8 +31,7 @@ async def surname(mes: Message, state: FSMContext):
     await state.update_data(
         {"familiya": mes.text}
     )
-    await mes.answer(
-        'Teлефон ракамингизни коди билан 7 та ракамини кушиб ёзинг\nMасалан: <b>901234567</b>\nШунака куринишда булсин!')
+    await mes.answer(text_client_reg()['telefon'])
     await ClientForm.next()
 
 
@@ -41,13 +40,13 @@ async def get_phone(mes: Message, state: FSMContext):
     await state.update_data(
         {'telefon': f"998{mes.text}"}
     )
-    await mes.answer('Хайдовчилик гувохномангиз борми?', reply_markup=prava)
+    await mes.answer(text_client_reg()['prava'], reply_markup=prava)
     await ClientForm.next()
 
 
 @dp.message_handler(state=ClientForm.telefon, content_types='text')
 async def st(mes: Message):
-    await mes.answer("Телефон рақамни нотўғри киритдингиз!\nТелефон рақамингизни қайтадан киритинг!")
+    await mes.answer(text_client_reg()['telefon_qayta'])
     await ClientForm.telefon.set()
 
 
@@ -59,7 +58,11 @@ async def get_cat(mes: Message, state: FSMContext):
     data = await state.get_data()
     res = requests.post(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     text = res.json()
-    await mes.answer(f"{data['ism']} {text['message']}", reply_markup=menu_client)
+    await mes.answer(f"{data['ism']} {text['message']}\n", reply_markup=menu_client)
+    if mes.text == 'Бор':
+        await mes.answer(text_client_reg()['prava_bor'])
+    else:
+        await mes.answer(text_client_reg()['prava_yuq'])
     await state.finish()
 
 
@@ -82,17 +85,16 @@ async def edit_profile(mes: Message):
 @dp.callback_query_handler(text=['client:name', 'client:surname', 'client:phone', 'pra'])
 async def set_state(call: CallbackQuery):
     if call.data == 'client:name':
-        await call.message.answer("Исмингизни ёзинг:")
+        await call.message.answer(text_client_up()['ism'])
         await EditClient.ism.set()
     elif call.data == 'client:surname':
-        await call.message.answer("Фамилиянгизни ёзинг:")
+        await call.message.answer(text_client_up()['familiya'])
         await EditClient.familiya.set()
     elif call.data == 'client:phone':
-        await call.message.answer(
-            "Teлефон ракамингизни коди билан 7 та ракамини кушиб ёзинг\nMасалан: <b>901234567</b>\nШунака куринишда булсин!")
+        await call.message.answer(text_client_up()['telefon'])
         await EditClient.telefon.set()
     elif call.data == 'pra':
-        await call.message.answer("Ҳайдовчилик гувоҳномасини олдингизми?", reply_markup=prava)
+        await call.message.answer(text_client_up()['prava'], reply_markup=prava)
         await EditClient.prava.set()
     await call.answer(cache_time=3)
 
@@ -115,13 +117,19 @@ async def set_surname(mes: Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(content_types=['text'], state=EditClient.telefon)
+@dp.message_handler(regexp=re.compile(r"^[378]{2}|9[01345789]\d{7}$"), state=EditClient.telefon)
 async def set_phone(mes: Message, state: FSMContext):
     data = {'telefon': f"998{mes.text}"}
     rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     res = rp.json()
     await mes.answer(f"Телефонгиз {res['telefon']} га ўзгартирилди!", reply_markup=menu_client)
     await state.finish()
+
+
+@dp.message_handler(content_types=['text'], state=EditClient.telefon)
+async def set_phone(mes: Message):
+    await mes.answer(text_client_up()['telefon_qayta'])
+    await EditClient.telefon.set()
 
 
 @dp.message_handler(content_types=['text'], state=EditClient.prava)
@@ -154,7 +162,7 @@ async def lesson(mes: Message):
     res = rp.json()
     row = ""
     for (i, se) in zip(range(1, 6), res['results']):
-        row += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
+        row += f"{i}. {se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
     await mes.answer(f"Натижа {res['count']} та\n" + row,
                      reply_markup=create_after_sessions_for_cl(res, page=1))
 
@@ -165,7 +173,7 @@ async def lesson(mes: Message):
     res = rp.json()
     row = ""
     for (i, se) in zip(range(1, 6), res['results']):
-        row += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
+        row += f"{i}. {se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
     await mes.answer(f"Натижа {res['count']} та\n" + row,
                      reply_markup=before_sessions_for_cl(page=1))
 
@@ -180,7 +188,7 @@ async def action(call: CallbackQuery):
         res = r1.json()
         row = ""
         for (i, se) in zip(range(1, 6), res['results']):
-            row += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
+            row += f"{i}. {se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row,
                                      reply_markup=create_after_sessions_for_cl(res, page + 1))
     else:
@@ -198,7 +206,7 @@ async def action(call: CallbackQuery):
         res = r1.json()
         row = ""
         for (i, se) in zip(range(1, 6), res['results']):
-            row += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
+            row += f"{i}. {se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row,
                                      reply_markup=create_after_sessions_for_cl(res, page - 1))
     else:
@@ -216,7 +224,7 @@ async def action(call: CallbackQuery):
         res = r1.json()
         row_2 = ""
         for (i, se) in zip(range(1, 6), res['results']):
-            row_2 += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
+            row_2 += f"{i}. {se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
                                      reply_markup=before_sessions_for_cl(page + 1))
     else:
@@ -234,7 +242,7 @@ async def action(call: CallbackQuery):
         res = r1.json()
         row_2 = ""
         for (i, se) in zip(range(1, 6), res['results']):
-            row_2 += f"{i}.{se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
+            row_2 += f"{i}. {se['instructor']} {se['moshina']} {se['vaqt']}\n     {se['i_telefoni']}\n"
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
                                      reply_markup=before_sessions_for_cl(page - 1))
     else:
@@ -248,7 +256,17 @@ async def daa(call: CallbackQuery, state: FSMContext):
     await state.update_data(
         {'session_id': s_id}
     )
-    await call.message.answer("Нимани ўзгартирмоқчисиз?", reply_markup=edit_session)
+    await call.message.answer("N", reply_markup=edit_session)
+    await call.answer(cache_time=1)
+
+
+@dp.message_handler(text='Машғулот манзилини олиш')
+async def delete(mes: Message, state: FSMContext):
+    s_id = await state.get_data()
+    rp = requests.get(url=f"{BASE_URL}/session/location/{s_id['session_id']}/")
+    r = rp.json()
+    await mes.answer_location(latitude=r['lat'], longitude=r['lon'])
+    await state.finish()
 
 
 @dp.message_handler(text='Машғулотни бекор килиш')
@@ -256,9 +274,10 @@ async def delete(mes: Message, state: FSMContext):
     s_id = await state.get_data()
     rp = requests.delete(url=f"{BASE_URL}/session/detail/{s_id['session_id']}/")
     if rp.status_code == 204:
-        await mes.answer("Машғулот муваффақиятли ўчирилди", reply_markup=menu_client)
+        await mes.answer("Машғулот ўчирилди", reply_markup=menu_client)
     else:
         await mes.answer("Нимадир хато кетди бошқатдан ўриниб кўринг!")
+    await state.finish()
 
 
 @dp.message_handler(text="Бош меню")
@@ -266,7 +285,7 @@ async def menu(mes: Message):
     await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client)
 
 
-@dp.message_handler(text="Нархлар")
+@dp.message_handler(text="Машғулот нархлари")
 async def price(mes: Message):
     r = requests.get(url=f"{BASE_URL}/session/price/list/")
     pr = r.json()
@@ -280,7 +299,7 @@ async def price(mes: Message):
 async def delete_profile(mes: Message):
     rp = requests.delete(url=f"{BASE_URL}/client/delete/{mes.from_user.id}/")
     if rp.status_code == 204:
-        await mes.answer("Профилингиз муваффақиятли ўчирилди", reply_markup=ReplyKeyboardRemove())
+        await mes.answer("Профилингиз ўчирилди", reply_markup=ReplyKeyboardRemove())
     else:
         await mes.answer("Нимадир хато кетди қайтадан ўриниб кўринг!")
 

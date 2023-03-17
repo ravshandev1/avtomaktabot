@@ -4,7 +4,7 @@ from data.config import BASE_URL
 from states.session import SessionForm, SessionEdit
 from aiogram.dispatcher import FSMContext
 from loader import dp
-from keyboards.default.register import where, payment, stp_btn, str_btn, locate
+from keyboards.default.register import stp_btn, str_btn, regions
 from datetime import datetime, timedelta
 from keyboards.inline.calendar import create_calendar, call_data
 from keyboards.inline.clock import create_clock
@@ -15,7 +15,7 @@ from keyboards.default.is_authenticated import menu_client, menu_instructor
 
 
 @dp.message_handler(text="Машғулот яратиш")
-async def session(mes: Message):
+async def ax(mes: Message):
     res = requests.get(url=f"{BASE_URL}/session/")
     cts = res.json()
     if len(cts) == 0:
@@ -23,9 +23,23 @@ async def session(mes: Message):
     else:
         markup = ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
         for i in cts:
-            markup.insert(KeyboardButton(text=f"{i['toifa']}"))
-        await mes.answer('Бизда мавжуд тоифалар\nҚайси тоифани ўрганмоқчисиз!', reply_markup=markup)
-        await SessionForm.toifa.set()
+            markup.insert(KeyboardButton(text=f"{i['tuman']}"))
+        await mes.answer('Узингизга қулай бўлган туманни танланг', reply_markup=markup)
+        await SessionForm.tuman.set()
+
+
+@dp.message_handler(state=SessionForm.tuman)
+async def session(mes: Message, state: FSMContext):
+    res = requests.get(url=f"{BASE_URL}/session/?tum={mes.text}")
+    cts = res.json()
+    await state.update_data(
+        {'tuman': mes.text}
+    )
+    markup = ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
+    for i in cts:
+        markup.insert(KeyboardButton(text=f"{i['toifa_name']}"))
+    await mes.answer('Бизда мавжуд тоифалар\nҚайси тоифани ўрганмоқчисиз!', reply_markup=markup)
+    await SessionForm.toifa.set()
 
 
 @dp.message_handler(state=SessionForm.toifa)
@@ -34,7 +48,7 @@ async def get_category(mes: Message, state: FSMContext):
         {'toifa': mes.text}
     )
     cat = await state.get_data()
-    res = requests.get(url=f"{BASE_URL}/session/?cat={cat['toifa']}")
+    res = requests.get(url=f"{BASE_URL}/session/?tum={cat['tuman']}&cat={cat['toifa']}")
     genders = res.json()
     markup = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     for i in genders:
@@ -49,7 +63,7 @@ async def get_gender(mes: Message, state: FSMContext):
         {'jins': mes.text}
     )
     gen = await state.get_data()
-    res = requests.get(url=f"{BASE_URL}/session/?cat={gen['toifa']}&gen={gen['jins']}")
+    res = requests.get(url=f"{BASE_URL}/session/?tum={gen['tuman']}&cat={gen['toifa']}&gen={gen['jins']}")
     cars = res.json()
     markup = ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
     for i in cars:
@@ -60,21 +74,23 @@ async def get_gender(mes: Message, state: FSMContext):
 
 @dp.message_handler(state=SessionForm.moshina)
 async def get_car(mes: Message, state: FSMContext):
-    await state.update_data(
-        {'moshina': mes.text}
-    )
     car = await state.get_data()
-    res = requests.get(url=f"{BASE_URL}/session/?cat={car['toifa']}&gen={car['jins']}&car={car['moshina']}")
+    res = requests.get(
+        url=f"{BASE_URL}/session/?tum={car['tuman']}&cat={car['toifa']}&gen={car['jins']}&car={mes.text}")
     ins = res.json()
     data = list()
     markup = ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
     for i in ins:
-        markup.insert(KeyboardButton(text=f"{i['ism']}"))
+        star = ""
+        for j in range(i['get_rating']):
+            star += "⭐️"
+        markup.insert(KeyboardButton(text=f"{i['ism']} {i['familiya']}\n{star}"))
         loca = i['location']
         lce = loca.split(', ')
-        data.append({'ins_ism': i['ism'], 'ins_tg': i['telegram_id'], 'lat': lce[0], 'lon': lce[1]})
+        data.append({'ism': i['ism'], 'familiya': i['familiya'], 'card': i['card'], 'ins_tg': i['telegram_id'],
+                     'lat': lce[0], 'lon': lce[1]})
     await state.update_data(
-        {'ins_data': data}
+        {'ins_data': data, 'moshina': mes.text}
     )
     await mes.answer("Инструктирни танланг", reply_markup=markup)
     await SessionForm.next()
@@ -85,45 +101,18 @@ async def get_instructor(mes: Message, state: FSMContext):
     data = await state.get_data()
     tg = None
     for i in data['ins_data']:
-        if i['ins_ism'] == mes.text:
+        ls = mes.text.split()
+        if (i['ism'] == ls[0]) and (i['familiya'] == ls[1]):
             tg = i['ins_tg']
     await state.update_data(
         {'instructor': mes.text, 'ins_tg_id': tg}
     )
-    await mes.answer("Инструктир сизни қайердан олиб кетсин?", reply_markup=where)
-    await SessionForm.next()
-
-
-@dp.message_handler(state=SessionForm.qayerdan)
-async def sure(mes: Message, state: FSMContext):
-    data = await state.get_data()
+    await mes.answer("Машғулот бўладиган манзил")
     ins_data = data['ins_data']
     lat = float(ins_data[0]['lat'])
     lon = float(ins_data[0]['lon'])
-    if mes.text == 'Инструктор манзилидан':
-        await dp.bot.send_location(latitude=lat, longitude=lon,
-                                   chat_id=mes.from_user.id)
-        await mes.answer("Мана шу манзил сизга маъқулми?", reply_markup=locate)
-        await SessionForm.next()
-    elif mes.text == 'Уйдан':
-        await state.update_data(
-            {'qayerdan': 'Уйдан'}
-        )
-        await mes.answer("Кунни танланг", reply_markup=create_calendar())
-        await SessionForm.kun.set()
-
-
-@dp.message_handler(state=SessionForm.yes_or_no)
-async def get_location(mes: Message, state: FSMContext):
-    if mes.text == 'Ҳа мақул':
-        await state.update_data(
-            {'qayerdan': 'Инструктор манзилидан'}
-        )
-    elif mes.text == 'Йўқ уйимдан олиб кетсин':
-        await state.update_data(
-            {'qayerdan': 'Уйдан'}
-        )
-    await mes.answer("Кунни танланг", reply_markup=create_calendar())
+    await dp.bot.send_location(latitude=lat, longitude=lon, chat_id=mes.from_user.id)
+    await mes.answer("Машғулот кунини танланг", reply_markup=create_calendar())
     await SessionForm.next()
 
 
@@ -154,7 +143,7 @@ async def get_day(call: CallbackQuery, state: FSMContext):
                 for i in rp['vaqt']:
                     txt += f"{i}\n"
                 await dp.bot.send_message(call.from_user.id,
-                                          f"Инструкторни мана шу кунга банд қилинган вақтлари Илтимос бўш вақтни танланг!\n\n{txt}")
+                                          f"Инструкторни мана шу кунга банд қилинган вақтлари инструкторни банд бўлмаган вақтини танланг!\n\n{txt}")
             else:
                 await state.update_data(
                     {'free': True}
@@ -170,7 +159,7 @@ async def get_day(call: CallbackQuery, state: FSMContext):
         await SessionForm.kun.set()
     elif actions == "NEXT-MONTH":
         ne = curr + timedelta(days=31)
-        await call.message.edit_text("Илтимос важдения кунини танланг!",
+        await call.message.edit_text("Илтимос кунини танланг!",
                                      reply_markup=create_calendar(int(ne.year), int(ne.month)))
         await SessionForm.kun.set()
     elif actions == 'IGNORE':
@@ -209,6 +198,13 @@ async def get_date(call: CallbackQuery, state: FSMContext):
         await SessionForm.vaqt.set()
     elif actions == "OK":
         data = await state.get_data()
+        ins_data = data['ins_data']
+        if ins_data[0]['card'] == 'Ҳа':
+            markup = ReplyKeyboardMarkup(keyboard=[[KeyboardButton('Нақд'), KeyboardButton('Карта')]],
+                                         resize_keyboard=True)
+        else:
+            markup = ReplyKeyboardMarkup(keyboard=[[KeyboardButton('Нақд')]],
+                                         resize_keyboard=True)
         dt = data['kun']
         kun = int(dt.split('-')[2])
         if (now.day == kun) and (now.time().hour >= hr.hour) and (now.time().minute > mn.minute):
@@ -218,23 +214,33 @@ async def get_date(call: CallbackQuery, state: FSMContext):
             if data['free'] is False:
                 r = requests.get(url=f"{BASE_URL}/instructor/free/?tel_id={data['ins_tg_id']}&date={data['kun']}")
                 rp = r.json()
-                if f"{str(hr)[11:13]}:00" in rp['vaqt']:
-                    await call.message.edit_text(
-                        text="Банд қилинган вақтни танлолмайсиз!\nИлтимос бўш вақтни танланг!",
+                vq_1 = list()
+                vq_2 = list()
+                for i in rp['vaqt']:
+                    i = int(i[:2])
+                    v1 = i + 1
+                    v2 = i - 1
+                    vq_1.append(str(v1))
+                    vq_2.append(str(v2))
+                if (f"{str(hr)[11:13]}" in vq_1) or (f"{str(hr)[11:13]}" in vq_2):
+                    await call.message.answer(
+                        text="Танлаган вақтиз банд қилинган вақтлардан 1 соат фарқ қилсин!",
                         reply_markup=create_clock())
                     await SessionForm.vaqt.set()
+                    await call.message.delete()
                 else:
                     await state.update_data(
                         {'soat': f"{hr.hour}:{mn.minute}"}
                     )
-                    await call.message.answer(text='Тулов турини танланг:', reply_markup=payment)
+
+                    await call.message.answer(text='Тулов турини танланг:', reply_markup=markup)
                     await SessionForm.next()
                     await call.message.delete()
             else:
                 await state.update_data(
                     {'soat': f"{hr.hour}:{mn.minute}"}
                 )
-                await call.message.answer(text='Тулов турини танланг:', reply_markup=payment)
+                await call.message.answer(text='Тулов турини танланг:', reply_markup=markup)
                 await SessionForm.next()
                 await call.message.delete()
     await call.answer(cache_time=1)
@@ -263,7 +269,7 @@ async def get_session(call: CallbackQuery):
         res = r.json()
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
-            row_2 += f"{i}.{ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
+            row_2 += f"{i}. {ses['client']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
         await call.message.answer(f"Натижа {res['count']} тa\n" + row_2,
                                   reply_markup=create_after_sessions_for_ins(res, page=1))
     elif call.data == 'before':
@@ -271,7 +277,7 @@ async def get_session(call: CallbackQuery):
         res = r.json()
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
-            row_2 += f"{i}.{ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
+            row_2 += f"{i}. {ses['client']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
         await call.message.answer(f"Натижа {res['count']} тa\n" + row_2,
                                   reply_markup=before_sessions_for_ins(page=1))
     await call.answer(cache_time=3)
@@ -287,7 +293,7 @@ async def action(call: CallbackQuery):
         res = r1.json()
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
-            row_2 += f"{i}.{ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
+            row_2 += f"{i}. {ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
                                      reply_markup=create_after_sessions_for_ins(res, page + 1))
     else:
@@ -305,7 +311,7 @@ async def action(call: CallbackQuery):
         res = r1.json()
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
-            row_2 += f"{i}.{ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
+            row_2 += f"{i}. {ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
                                      reply_markup=create_after_sessions_for_ins(res, page - 1))
     else:
@@ -316,24 +322,22 @@ async def action(call: CallbackQuery):
 @dp.callback_query_handler(text_contains='id:')
 async def get_ses(call: CallbackQuery, state: FSMContext):
     s_id = call.data.split('id:')[1]
-    rp = requests.get(url=f"{BASE_URL}/instructor/{call.from_user.id}/")
-    res = rp.json()
-    if res['balans'] > 15000:
-        await state.update_data(
-            {'session_id': s_id}
-        )
-        await call.message.answer("Бошлашни босинг 👇", reply_markup=str_btn)
-        await call.answer(cache_time=3)
-        await SessionEdit.start.set()
-    else:
-        await call.message.answer("Балансингиз 15 000 сўмдан кам Илтимос балансингизни тўлдиринг!!!")
+    # rp = requests.get(url=f"{BASE_URL}/instructor/{call.from_user.id}/")
+    # res = rp.json()
+    # if res['balans'] > 15000:
+    await state.update_data({'session_id': s_id})
+    await call.message.answer("Бошлашни босинг 👇", reply_markup=str_btn)
     await call.answer(cache_time=3)
+    await SessionEdit.start.set()
+    # else:
+    # await call.message.answer("Бошлашни босинг 👇", reply_markup=str_btn)
+    # await call.answer(cache_time=3)
 
 
 @dp.message_handler(text='Бошлаш', state=SessionEdit.start)
 async def start(mes: Message):
     str_obj()
-    await mes.answer("Вақт кетди\nТўгатишни тўгмасини босиш есингиздан чиқмасин!!!", reply_markup=stp_btn)
+    await mes.answer("Вақт кетди\nТўгатиш тўгмасини босиш есингиздан чиқмасин!!!", reply_markup=stp_btn)
     await SessionEdit.next()
 
 
@@ -348,12 +352,13 @@ async def finish(mes: Message, state: FSMContext):
         minute = 120
         await mes.answer("Тугатишни босиш есингиздан чиқиб кетди вақтни 2 соат бўлганида тугатдим!!!")
     summa = minute * price
-    if res['qayerdan'] == 'Уйдан':
-        summa += 15000
+    # if res['qayerdan'] == 'Уйдан':
+    #     summa += 15000
     rp = requests.patch(url=f"{BASE_URL}/session/detail/{s_id['session_id']}/?ins={mes.from_user.id}",
                         data={'summa': summa})
     rs = rp.json()
-    await mes.answer(f"{summa} сўм бўлди\nСизнинг балансенингиз {rs['balance']} сўм", reply_markup=menu_instructor)
+    # await mes.answer(f"{summa} сўм бўлди\nСизнинг балансенингиз {rs['balance']} сўм", reply_markup=menu_instructor)
+    await mes.answer(f"{summa} сўм бўлди", reply_markup=menu_instructor)
     await dp.bot.send_message(rs['client'], f"{summa} сўм бўлди\nИнстркторга 1 дан 5 гача бўлган қийматда баҳоланг!",
                               reply_markup=rate)
     requests.post(url=f"{BASE_URL}/instructor/rating/", data={'instructor': mes.from_user.id, 'client': rs['client']})

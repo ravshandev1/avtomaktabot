@@ -59,15 +59,15 @@ def before_sessions_for_cl(page):
 rate = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text='1😣', callback_data='juda_yomon'),
-            InlineKeyboardButton(text='2😔', callback_data='yomon'),
+            InlineKeyboardButton(text='⭐️', callback_data='juda_yomon'),
+            InlineKeyboardButton(text='⭐️⭐️', callback_data='yomon'),
         ],
         [
-            InlineKeyboardButton(text='3😑', callback_data='qoniqarli'),
-            InlineKeyboardButton(text='4🙂', callback_data='yaxshi'),
+            InlineKeyboardButton(text='⭐️⭐️⭐️', callback_data='qoniqarli'),
+            InlineKeyboardButton(text='⭐️⭐️⭐️⭐️', callback_data='yaxshi'),
         ],
         [
-            InlineKeyboardButton(text='5😁', callback_data='zur')
+            InlineKeyboardButton(text='⭐️⭐️⭐️⭐️⭐️', callback_data='zur')
         ]
     ]
 )

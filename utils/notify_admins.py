@@ -15,4 +15,4 @@ async def on_startup_notify():
 
 
 async def notify(instructor: int):
-    await dp.bot.send_message(instructor, "Сизга янги дарс банд қилинди")
+    await dp.bot.send_message(instructor, "Сизга янги машғулот банд қилинди")

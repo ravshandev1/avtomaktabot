@@ -3,20 +3,20 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 menu_instructor = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="🧑‍✈️Профил"),
-            KeyboardButton(text="🧑‍✈️Профилни ўзгартириш"),
-        ],
-        [
-            KeyboardButton(text="Балансни тўлдириш"),
-            KeyboardButton(text="🧑‍✈️Машғулотлар рўйхати"),
+            KeyboardButton(text="👨‍✈️️Профил"),
+            KeyboardButton(text="👨‍✈️Профилни ўзгартириш"),
         ],
         [
             KeyboardButton(text="Профилни ўчириш"),
-            KeyboardButton(text='Нарх'),
+            KeyboardButton(text='Машғулот нархлари'),
         ],
         [
-            KeyboardButton(text="Фоиз"),
+            # KeyboardButton(text="Балансни тўлдириш"),
+            KeyboardButton(text="👨‍✈️Машғулотлар рўйхати"),
         ],
+        # [
+        #     KeyboardButton(text="Бот ҳисобингиздан оладиган хизмат ҳақи"),
+        # ],
     ],
     resize_keyboard=True
 )
@@ -32,7 +32,7 @@ menu_client = ReplyKeyboardMarkup(
             KeyboardButton(text="Машғулот"),
         ],
         [
-            KeyboardButton(text='Нархлар')
+            KeyboardButton(text='Машғулот нархлари')
         ]
     ],
     resize_keyboard=True
@@ -68,6 +68,7 @@ edit_session = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text='Машғулотни бекор килиш'),
+            KeyboardButton(text='Машғулот манзилини олиш'),
         ],
         [
             KeyboardButton(text="Бош меню")

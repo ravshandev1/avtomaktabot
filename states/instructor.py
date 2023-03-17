@@ -10,6 +10,7 @@ class InstructorForm(StatesGroup):
     toifa = State()
     moshina = State()
     nomeri = State()
+    card = State()
     location = State()
 
 
@@ -23,6 +24,7 @@ class EditInstructor(StatesGroup):
     moshina = State()
     nomeri = State()
     location = State()
+    card = State()
 
 
 class Balans(StatesGroup):
