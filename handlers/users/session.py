@@ -4,7 +4,7 @@ from data.config import BASE_URL
 from states.session import SessionForm, SessionEdit
 from aiogram.dispatcher import FSMContext
 from loader import dp
-from keyboards.default.register import stp_btn, str_btn, regions
+from keyboards.default.register import stp_btn, str_btn, text_ses
 from datetime import datetime, timedelta
 from keyboards.inline.calendar import create_calendar, call_data
 from keyboards.inline.clock import create_clock
@@ -38,7 +38,7 @@ async def session(mes: Message, state: FSMContext):
     markup = ReplyKeyboardMarkup(row_width=4, resize_keyboard=True)
     for i in cts:
         markup.insert(KeyboardButton(text=f"{i['toifa_name']}"))
-    await mes.answer('Бизда мавжуд тоифалар\nҚайси тоифани ўрганмоқчисиз!', reply_markup=markup)
+    await mes.answer(text_ses()['yaratish'], reply_markup=markup)
     await SessionForm.toifa.set()
 
 
@@ -53,7 +53,7 @@ async def get_category(mes: Message, state: FSMContext):
     markup = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
     for i in genders:
         markup.insert(KeyboardButton(text=f"{i['jins']}"))
-    await mes.answer('Инструктир жинсини танланг', reply_markup=markup)
+    await mes.answer(text_ses()['jins'], reply_markup=markup)
     await SessionForm.next()
 
 
@@ -68,7 +68,7 @@ async def get_gender(mes: Message, state: FSMContext):
     markup = ReplyKeyboardMarkup(row_width=3, resize_keyboard=True)
     for i in cars:
         markup.insert(KeyboardButton(text=f"{i['moshina']}"))
-    await mes.answer('Қанақа мошинада ўрганмоқчисиз', reply_markup=markup)
+    await mes.answer(text_ses()['moshina'], reply_markup=markup)
     await SessionForm.next()
 
 
@@ -92,7 +92,7 @@ async def get_car(mes: Message, state: FSMContext):
     await state.update_data(
         {'ins_data': data, 'moshina': mes.text}
     )
-    await mes.answer("Инструктирни танланг", reply_markup=markup)
+    await mes.answer(text_ses()['instructor'], reply_markup=markup)
     await SessionForm.next()
 
 
@@ -107,12 +107,12 @@ async def get_instructor(mes: Message, state: FSMContext):
     await state.update_data(
         {'instructor': mes.text, 'ins_tg_id': tg}
     )
-    await mes.answer("Машғулот бўладиган манзил")
+    await mes.answer(text_ses()['manzil'])
     ins_data = data['ins_data']
     lat = float(ins_data[0]['lat'])
     lon = float(ins_data[0]['lon'])
     await dp.bot.send_location(latitude=lat, longitude=lon, chat_id=mes.from_user.id)
-    await mes.answer("Машғулот кунини танланг", reply_markup=create_calendar())
+    await mes.answer(text_ses()['kun'], reply_markup=create_calendar())
     await SessionForm.next()
 
 
@@ -129,8 +129,7 @@ async def get_day(call: CallbackQuery, state: FSMContext):
         )
         dat = await state.get_data()
         if (now.year >= ret_data.year) and (now.month >= ret_data.month) and (now.day > ret_data.day):
-            await call.message.answer("Ўтиб кетган кунни танлаб булмайди!\nИлтимос енди келадиган кунни танланг!",
-                                      reply_markup=create_calendar())
+            await call.message.answer(text_ses()['utgan_kun'], reply_markup=create_calendar())
             await call.message.delete()
         else:
             r = requests.get(url=f"{BASE_URL}/instructor/free/?tel_id={dat['ins_tg_id']}&date={dat['kun']}")
@@ -149,7 +148,7 @@ async def get_day(call: CallbackQuery, state: FSMContext):
                     {'free': True}
                 )
             await SessionForm.next()
-            await call.message.answer(text='Вақтни танланг:', reply_markup=create_clock())
+            await call.message.answer(text_ses()['vaqt'], reply_markup=create_clock())
             await call.message.delete()
         await call.answer(cache_time=1)
     elif actions == "PREV-MONTH":
@@ -208,8 +207,7 @@ async def get_date(call: CallbackQuery, state: FSMContext):
         dt = data['kun']
         kun = int(dt.split('-')[2])
         if (now.day == kun) and (now.time().hour >= hr.hour) and (now.time().minute > mn.minute):
-            await call.message.edit_text(text="Ўтиб кетган вақтни танлаб бўлмайди\nИлтимос вақтни танланг:",
-                                         reply_markup=create_clock())
+            await call.message.edit_text(text_ses()['utgan_vaqt'], reply_markup=create_clock())
         else:
             if data['free'] is False:
                 r = requests.get(url=f"{BASE_URL}/instructor/free/?tel_id={data['ins_tg_id']}&date={data['kun']}")
@@ -223,9 +221,7 @@ async def get_date(call: CallbackQuery, state: FSMContext):
                     vq_1.append(str(v1))
                     vq_2.append(str(v2))
                 if (f"{str(hr)[11:13]}" in vq_1) or (f"{str(hr)[11:13]}" in vq_2):
-                    await call.message.answer(
-                        text="Танлаган вақтиз банд қилинган вақтлардан 1 соат фарқ қилсин!",
-                        reply_markup=create_clock())
+                    await call.message.answer(text_ses()['band_qilingan_vaqt'], reply_markup=create_clock())
                     await SessionForm.vaqt.set()
                     await call.message.delete()
                 else:
@@ -233,14 +229,14 @@ async def get_date(call: CallbackQuery, state: FSMContext):
                         {'soat': f"{hr.hour}:{mn.minute}"}
                     )
 
-                    await call.message.answer(text='Тулов турини танланг:', reply_markup=markup)
+                    await call.message.answer(text_ses()['tulov'], reply_markup=markup)
                     await SessionForm.next()
                     await call.message.delete()
             else:
                 await state.update_data(
                     {'soat': f"{hr.hour}:{mn.minute}"}
                 )
-                await call.message.answer(text='Тулов турини танланг:', reply_markup=markup)
+                await call.message.answer(text_ses()['tulov'], reply_markup=markup)
                 await SessionForm.next()
                 await call.message.delete()
     await call.answer(cache_time=1)
@@ -255,10 +251,10 @@ async def get_payent_method(mes: Message, state: FSMContext):
     data['vaqt'] = f"{data['kun']} {data['soat']}"
     rp = requests.post(url=f"{BASE_URL}/session/", data=data)
     if rp.status_code == 200:
-        await mes.answer("Машғулот муваффақиятли яратилди!", reply_markup=menu_client)
+        await mes.answer(text_ses()['mashgulot_yaratilsa'], reply_markup=menu_client)
         await notify(data['ins_tg_id'])
     else:
-        await mes.answer("Хато кетди қайтадан ўриниб кўринг!", reply_markup=menu_client)
+        await mes.answer(text_ses()['mashgulot_yaratilmasa'], reply_markup=menu_client)
     await state.finish()
 
 
