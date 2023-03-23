@@ -2,13 +2,14 @@ from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 import requests
 import re
 from data.config import BASE_URL
-from states.client import ClientForm, EditClient
+from states.client import ClientForm, EditClient, Delete
 from aiogram.dispatcher import FSMContext
 from loader import dp
 from keyboards.default.register import prava, text_client_reg, text_client_up
 from keyboards.inline.edit_profile import client
-from keyboards.default.is_authenticated import menu_client, action_session, sessions, edit_session
+from keyboards.default.is_authenticated import menu_client, action_session, sessions, edit_session, profile_delete
 from keyboards.inline.sessions import create_after_sessions_for_cl, before_sessions_for_cl
+from utils.notify_admins import notify_session_deleted
 
 
 @dp.message_handler(text='Ўрганувчи')
@@ -256,7 +257,7 @@ async def daa(call: CallbackQuery, state: FSMContext):
     await state.update_data(
         {'session_id': s_id}
     )
-    await call.message.answer("N", reply_markup=edit_session)
+    await call.message.answer("Керакли булимни танланг 👇", reply_markup=edit_session)
     await call.answer(cache_time=1)
 
 
@@ -273,8 +274,10 @@ async def delete(mes: Message, state: FSMContext):
 async def delete(mes: Message, state: FSMContext):
     s_id = await state.get_data()
     rp = requests.delete(url=f"{BASE_URL}/session/detail/{s_id['session_id']}/")
-    if rp.status_code == 204:
+    rs = rp.json()
+    if rp.status_code == 200:
         await mes.answer("Машғулот ўчирилди", reply_markup=menu_client)
+        await notify_session_deleted(instructor=rs['id'], time=rs['vaqt'])
     else:
         await mes.answer("Нимадир хато кетди бошқатдан ўриниб кўринг!")
     await state.finish()
@@ -296,12 +299,23 @@ async def price(mes: Message):
 
 
 @dp.message_handler(text="Профилни ўчириш")
-async def delete_profile(mes: Message):
-    rp = requests.delete(url=f"{BASE_URL}/client/delete/{mes.from_user.id}/")
-    if rp.status_code == 204:
-        await mes.answer("Профилингиз ўчирилди", reply_markup=ReplyKeyboardRemove())
-    else:
-        await mes.answer("Нимадир хато кетди қайтадан ўриниб кўринг!")
+async def a(mes: Message):
+    await mes.answer('Профилингизни ўчирмоқчимисиз?', reply_markup=profile_delete)
+    await Delete.yes_or_no.set()
+
+
+@dp.message_handler(state=Delete.yes_or_no)
+async def delete_profile(mes: Message, state: FSMContext):
+    if mes.text == 'Ҳа':
+        rp = requests.delete(url=f"{BASE_URL}/client/delete/{mes.from_user.id}/")
+        print(rp.text)
+        if rp.status_code == 204:
+            await mes.answer("Профилингиз ўчирилди", reply_markup=ReplyKeyboardRemove())
+        else:
+            await mes.answer("Нимадир хато кетди қайтадан ўриниб кўринг!")
+    elif mes.text == 'Йўқ':
+        await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client)
+    await state.finish()
 
 
 @dp.callback_query_handler(text=['juda_yomon', 'yomon', 'qoniqarli', 'yaxshi', 'zur'])

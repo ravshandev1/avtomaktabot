@@ -76,6 +76,15 @@ edit_session = ReplyKeyboardMarkup(
     ],
     resize_keyboard=True
 )
+profile_delete = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text='Ҳа'),
+            KeyboardButton(text='Йўқ'),
+        ]
+    ],
+    resize_keyboard=True
+)
 
 location_btn = ReplyKeyboardMarkup(keyboard=[
     [

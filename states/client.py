@@ -13,3 +13,7 @@ class EditClient(StatesGroup):
     familiya = State()
     telefon = State()
     prava = State()
+
+
+class Delete(StatesGroup):
+    yes_or_no = State()

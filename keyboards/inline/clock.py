@@ -13,7 +13,7 @@ def create_clock(hr=None, mn=None):
     if hr is None:
         hr = now
     if mn is None:
-        mn = now
+        mn = datetime(1900, 1, 23, 0, 0)
     hr = datetime.strftime(hr, "%H")
     mn = datetime.strftime(mn, "%M")
     keyboard = list()

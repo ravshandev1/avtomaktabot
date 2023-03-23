@@ -84,7 +84,7 @@ async def get_car(mes: Message, state: FSMContext):
         star = ""
         for j in range(i['get_rating']):
             star += "⭐️"
-        markup.insert(KeyboardButton(text=f"{i['ism']} {i['familiya']}\n{star}"))
+        markup.insert(KeyboardButton(text=f"{i['ism']} {i['familiya']}\n(Reyting) {star}"))
         loca = i['location']
         lce = loca.split(', ')
         data.append({'ism': i['ism'], 'familiya': i['familiya'], 'card': i['card'], 'ins_tg': i['telegram_id'],
@@ -189,11 +189,11 @@ async def get_date(call: CallbackQuery, state: FSMContext):
         await SessionForm.vaqt.set()
     elif actions == "minute⬆️":
         await call.message.edit_text(text="Вақтни танланг:",
-                                     reply_markup=create_clock(mn=mn - timedelta(minutes=1), hr=hr))
+                                     reply_markup=create_clock(mn=mn - timedelta(minutes=30), hr=hr))
         await SessionForm.vaqt.set()
     elif actions == "minute⬇️":
         await call.message.edit_text(text="Вақтни танланг:",
-                                     reply_markup=create_clock(mn=mn + timedelta(minutes=1), hr=hr))
+                                     reply_markup=create_clock(mn=mn + timedelta(minutes=30), hr=hr))
         await SessionForm.vaqt.set()
     elif actions == "OK":
         data = await state.get_data()
@@ -212,15 +212,15 @@ async def get_date(call: CallbackQuery, state: FSMContext):
             if data['free'] is False:
                 r = requests.get(url=f"{BASE_URL}/instructor/free/?tel_id={data['ins_tg_id']}&date={data['kun']}")
                 rp = r.json()
-                vq_1 = list()
-                vq_2 = list()
+                count = len(rp['vaqt'])
+                c1 = f"{str(hr)[11:13]}{str(mn)[13:16]}"
                 for i in rp['vaqt']:
-                    i = int(i[:2])
-                    v1 = i + 1
-                    v2 = i - 1
-                    vq_1.append(str(v1))
-                    vq_2.append(str(v2))
-                if (f"{str(hr)[11:13]}" in vq_1) or (f"{str(hr)[11:13]}" in vq_2):
+                    s = datetime.strptime(i, '%H:%M')
+                    s1 = s + timedelta(hours=1)
+                    s2 = s - timedelta(hours=1)
+                    if (datetime.strptime(c1, '%H:%M') >= s1) or (datetime.strptime(c1, '%H:%M') <= s2):
+                        count -= 1
+                if count:
                     await call.message.answer(text_ses()['band_qilingan_vaqt'], reply_markup=create_clock())
                     await SessionForm.vaqt.set()
                     await call.message.delete()
@@ -228,7 +228,6 @@ async def get_date(call: CallbackQuery, state: FSMContext):
                     await state.update_data(
                         {'soat': f"{hr.hour}:{mn.minute}"}
                     )
-
                     await call.message.answer(text_ses()['tulov'], reply_markup=markup)
                     await SessionForm.next()
                     await call.message.delete()
