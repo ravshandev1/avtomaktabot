@@ -277,7 +277,7 @@ async def delete(mes: Message, state: FSMContext):
     rs = rp.json()
     if rp.status_code == 200:
         await mes.answer("Машғулот ўчирилди", reply_markup=menu_client)
-        await notify_session_deleted(instructor=rs['id'], time=rs['vaqt'])
+        await notify_session_deleted(instructor=rs['id1'], time=rs['vaqt'])
     else:
         await mes.answer("Нимадир хато кетди бошқатдан ўриниб кўринг!")
     await state.finish()

@@ -41,7 +41,11 @@ genders = ReplyKeyboardMarkup(
 str_btn = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text='Бошлаш')
+            KeyboardButton(text='Бошлаш'),
+            KeyboardButton(text='Машғулотни бекор килиш'),
+        ],
+        [
+            KeyboardButton(text="⬅️Oртга"),
         ]
     ],
     resize_keyboard=True

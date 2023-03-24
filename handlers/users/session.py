@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from keyboards.inline.calendar import create_calendar, call_data
 from keyboards.inline.clock import create_clock
 from keyboards.inline.sessions import create_after_sessions_for_ins, before_sessions_for_ins, rate
-from utils.notify_admins import notify
+from utils.notify_admins import notify, notify_session_deleted
 from utils.timer import str_obj, stp_obj
 from keyboards.default.is_authenticated import menu_client, menu_instructor
 
@@ -142,7 +142,7 @@ async def get_day(call: CallbackQuery, state: FSMContext):
                 for i in rp['vaqt']:
                     txt += f"{i}\n"
                 await dp.bot.send_message(call.from_user.id,
-                                          f"Инструкторни мана шу кунга банд қилинган вақтлари инструкторни банд бўлмаган вақтини танланг!\n\n{txt}")
+                                          f"Инструктор мана шу кунга банд қилинган вақтлари бўш вақтини танланг!\n\n{txt}")
             else:
                 await state.update_data(
                     {'free': True}
@@ -315,25 +315,31 @@ async def action(call: CallbackQuery):
 
 
 @dp.callback_query_handler(text_contains='id:')
-async def get_ses(call: CallbackQuery, state: FSMContext):
+async def a(call: CallbackQuery, state: FSMContext):
     s_id = call.data.split('id:')[1]
-    # rp = requests.get(url=f"{BASE_URL}/instructor/{call.from_user.id}/")
-    # res = rp.json()
-    # if res['balans'] > 15000:
     await state.update_data({'session_id': s_id})
-    await call.message.answer("Бошлашни босинг 👇", reply_markup=str_btn)
-    await call.answer(cache_time=3)
+    await call.message.answer("Керакли булимни танланг 👇", reply_markup=str_btn)
+    await call.answer(cache_time=1)
     await SessionEdit.start.set()
-    # else:
-    # await call.message.answer("Бошлашни босинг 👇", reply_markup=str_btn)
-    # await call.answer(cache_time=3)
 
 
-@dp.message_handler(text='Бошлаш', state=SessionEdit.start)
-async def start(mes: Message):
-    str_obj()
-    await mes.answer("Вақт кетди\nТўгатиш тўгмасини босиш есингиздан чиқмасин!!!", reply_markup=stp_btn)
-    await SessionEdit.next()
+@dp.message_handler(state=SessionEdit.start)
+async def get_ses(mes: Message, state: FSMContext):
+    if mes.text == 'Машғулотни бекор килиш':
+        data = await state.get_data()
+        rp = requests.delete(url=f"{BASE_URL}/session/detail/{data['session_id']}/")
+        rs = rp.json()
+        if rp.status_code == 200:
+            await mes.answer("Машғулот ўчирилди", reply_markup=menu_instructor)
+            await notify_session_deleted(instructor=rs['id2'], time=rs['vaqt'])
+        await state.finish()
+    elif mes.text == 'Бошлаш':
+        str_obj()
+        await mes.answer("Вақт кетди\nТўгатиш тўгмасини босиш есингиздан чиқмасин!!!", reply_markup=stp_btn)
+        await SessionEdit.next()
+    elif mes.text == '⬅️Oртга':
+        await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_instructor)
+        await state.finish()
 
 
 @dp.message_handler(text='Тугатиш', state=SessionEdit.finish)
