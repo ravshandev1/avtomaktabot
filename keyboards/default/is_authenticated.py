@@ -7,7 +7,7 @@ menu_instructor = ReplyKeyboardMarkup(
             KeyboardButton(text="👨‍✈️Профилни ўзгартириш"),
         ],
         [
-            KeyboardButton(text="Профилни ўчириш"),
+            KeyboardButton(text="👨‍✈️Профилни ўчириш"),
             KeyboardButton(text='Машғулот нархлари'),
         ],
         [

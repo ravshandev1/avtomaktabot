@@ -2,7 +2,7 @@ from aiogram.types import Message, ReplyKeyboardRemove, CallbackQuery
 import requests
 import re
 from data.config import BASE_URL
-from states.client import ClientForm, EditClient, Delete
+from states.client import ClientForm, EditClient, DeleteCl
 from aiogram.dispatcher import FSMContext
 from loader import dp
 from keyboards.default.register import prava, text_client_reg, text_client_up
@@ -136,9 +136,8 @@ async def set_phone(mes: Message):
 @dp.message_handler(content_types=['text'], state=EditClient.prava)
 async def set_cat(mes: Message, state: FSMContext):
     data = {'prava': mes.text}
-    rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
-    res = rp.json()
-    await mes.answer(f"Правангиз {res['prava']} га ўзгартирилди!", reply_markup=menu_client)
+    requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
+    await mes.answer(f"Ҳайдовчилик гувоҳномангиз ўзгартирилди!", reply_markup=menu_client)
     await state.finish()
 
 
@@ -301,14 +300,13 @@ async def price(mes: Message):
 @dp.message_handler(text="Профилни ўчириш")
 async def a(mes: Message):
     await mes.answer('Профилингизни ўчирмоқчимисиз?', reply_markup=profile_delete)
-    await Delete.yes_or_no.set()
+    await DeleteCl.yes_or_no.set()
 
 
-@dp.message_handler(state=Delete.yes_or_no)
+@dp.message_handler(state=DeleteCl.yes_or_no)
 async def delete_profile(mes: Message, state: FSMContext):
     if mes.text == 'Ҳа':
         rp = requests.delete(url=f"{BASE_URL}/client/delete/{mes.from_user.id}/")
-        print(rp.text)
         if rp.status_code == 204:
             await mes.answer("Профилингиз ўчирилди", reply_markup=ReplyKeyboardRemove())
         else:

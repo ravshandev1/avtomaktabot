@@ -15,5 +15,5 @@ class EditClient(StatesGroup):
     prava = State()
 
 
-class Delete(StatesGroup):
+class DeleteCl(StatesGroup):
     yes_or_no = State()

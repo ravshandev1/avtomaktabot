@@ -1,11 +1,12 @@
 from aiogram.types import Message, ReplyKeyboardRemove, KeyboardButton, ReplyKeyboardMarkup, CallbackQuery
 import requests
 from data.config import BASE_URL
+from states.instructor import DeleteIns
 from states.instructor import InstructorForm, EditInstructor
 from aiogram.dispatcher import FSMContext
 from loader import dp
 from keyboards.default.register import genders, regions, categories, card_btn, text_ins_reg, text_ins_up
-from keyboards.default.is_authenticated import menu_instructor, location_btn
+from keyboards.default.is_authenticated import menu_instructor, location_btn, profile_delete
 from keyboards.inline.edit_profile import instructor
 from keyboards.inline.sessions import sessions
 import re
@@ -157,6 +158,25 @@ async def edit_profile(mes: Message):
     await mes.answer("Нимани ўзгартирмоқчисиз?", reply_markup=instructor)
 
 
+@dp.message_handler(text="👨‍✈️Профилни ўчириш")
+async def a(mes: Message):
+    await mes.answer('Профилингизни ўчирмоқчимисиз?', reply_markup=profile_delete)
+    await DeleteIns.yes_or_no.set()
+
+
+@dp.message_handler(state=DeleteIns.yes_or_no)
+async def delete_profile(mes: Message, state: FSMContext):
+    if mes.text == 'Ҳа':
+        rp = requests.delete(url=f"{BASE_URL}/client/delete/{mes.from_user.id}/")
+        if rp.status_code == 204:
+            await mes.answer("Профилингиз ўчирилди", reply_markup=ReplyKeyboardRemove())
+        else:
+            await mes.answer("Нимадир хато кетди қайтадан ўриниб кўринг!")
+    elif mes.text == 'Йўқ':
+        await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_instructor)
+    await state.finish()
+
+
 @dp.callback_query_handler(
     text=['instructor:name', 'instructor:surname', 'instructor:phone', 'car', 'number', 'region', 'cat', 'locate',
           'cart'])
@@ -277,6 +297,14 @@ async def set_cat(mes: Message, state: FSMContext):
     rp = requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
     res = rp.json()
     await mes.answer(f"Мошинангиз <b>{res['moshina']}</b> га ўзгартирилди!", reply_markup=menu_instructor)
+    await state.finish()
+
+
+@dp.message_handler(content_types=['text'], state=EditInstructor.card)
+async def set_cat(mes: Message, state: FSMContext):
+    data = {'card': mes.text}
+    requests.patch(url=f"{BASE_URL}/instructor/{mes.from_user.id}/", data=data)
+    await mes.answer(f"Тўлов тури ўзгартирилди!", reply_markup=menu_instructor)
     await state.finish()
 
 

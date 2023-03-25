@@ -29,3 +29,7 @@ class EditInstructor(StatesGroup):
 
 class Balans(StatesGroup):
     summa = State()
+
+
+class DeleteIns(StatesGroup):
+    yes_or_no = State()
