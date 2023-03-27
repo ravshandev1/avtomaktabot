@@ -145,11 +145,11 @@ async def get_profile(mes: Message):
     text = f"Исмингиз: <b>{res['ism']}</b>\n"
     text += f"Фамилиянгиз: <b>{res['familiya']}</b>\n"
     text += f"Телефон рақамангиз: <b>{res['telefon']}</b>\n"
-    text += f"Мошинагиз: <b>{res['moshina']}</b>\n"
+    text += f"Автомобилингиз: <b>{res['moshina']}</b>\n"
     text += f"Яшаш туманингиз: <b>{res['tuman']}</b>\n"
     text += f"Тоифангиз: <b>{res['toifa_name']}</b>\n"
     # text += f"Балансизгиз: <b>{res['balans']} so'm</b>\n"
-    text += f"Мошинангиз номери: <b>{res['nomeri']}</b>\n"
+    text += f"Давлат рақами: <b>{res['nomeri']}</b>\n"
     await mes.answer(text, reply_markup=menu_instructor)
 
 

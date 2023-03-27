@@ -73,7 +73,7 @@ async def get_profile(mes: Message):
     res = rp.json()
     text = f"Исмингиз: <b>{res['ism']}</b>\n"
     text += f"Фамилиянгиз: <b>{res['familiya']}</b>\n"
-    text += f"Телефон рақамангиз: <b>{res['telefon']}</b>\n"
+    text += f"Телефон рақамингиз: <b>{res['telefon']}</b>\n"
     text += f"Ҳайдовчилик гувоҳномангиз: <b>{res['prava']}</b>"
     await mes.answer(text, reply_markup=menu_client)
 
