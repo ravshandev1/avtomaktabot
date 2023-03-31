@@ -335,7 +335,7 @@ async def get_ses(mes: Message, state: FSMContext):
         await state.finish()
     elif mes.text == 'Бошлаш':
         str_obj()
-        await mes.answer("Вақт кетди\nТўгатиш тўгмасини босиш есингиздан чиқмасин!!!", reply_markup=stp_btn)
+        await mes.answer("Вақт кетди\nТугатиш тўгмасини босиш эсингиздан чиқмасин!!!", reply_markup=stp_btn)
         await SessionEdit.next()
     elif mes.text == '⬅️Oртга':
         await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_instructor)
