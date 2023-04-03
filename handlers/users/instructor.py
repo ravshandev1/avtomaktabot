@@ -144,7 +144,7 @@ async def get_profile(mes: Message):
     res = rp.json()
     text = f"Исмингиз: <b>{res['ism']}</b>\n"
     text += f"Фамилиянгиз: <b>{res['familiya']}</b>\n"
-    text += f"Телефон рақамангиз: <b>{res['telefon']}</b>\n"
+    text += f"Телефон рақамингиз: <b>{res['telefon']}</b>\n"
     text += f"Автомобилингиз: <b>{res['moshina']}</b>\n"
     text += f"Яшаш туманингиз: <b>{res['tuman']}</b>\n"
     text += f"Тоифангиз: <b>{res['toifa_name']}</b>\n"
