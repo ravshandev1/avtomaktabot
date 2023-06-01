@@ -1,15 +1,30 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-sessions = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Бўлиб ўтган", callback_data='before')
-        ],
-        [
-            InlineKeyboardButton(text="Бўлиши керак", callback_data='after')
-        ]
-    ]
-)
+
+def sessions(lang: str):
+    if lang == 'uz':
+        markup = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="Бўлиб ўтган", callback_data='before')
+                ],
+                [
+                    InlineKeyboardButton(text="Бўлиши керак", callback_data='after')
+                ]
+            ]
+        )
+    else:
+        markup = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text="Прошедший", callback_data='before')
+                ],
+                [
+                    InlineKeyboardButton(text="Должен быть", callback_data='after')
+                ]
+            ]
+        )
+    return markup
 
 
 def create_after_sessions_for_ins(response: dict, page: int):

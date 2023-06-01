@@ -11,10 +11,18 @@ from keyboards.default.is_authenticated import menu_client, action_session, sess
 from keyboards.inline.sessions import create_after_sessions_for_cl, before_sessions_for_cl
 from utils.notify_admins import notify_session_deleted
 
+lang = ''
 
-@dp.message_handler(text='Ўрганувчи')
+
+@dp.message_handler(text=['Ўрганувчи', 'Ученик'])
 async def register(mes: Message):
-    await mes.answer(text_client_reg()['ism'], reply_markup=ReplyKeyboardRemove())
+    global lang
+    if mes.text == 'Ученик':
+        lang = 'ru'
+        await mes.answer(text_client_reg()['ism_ru'], reply_markup=ReplyKeyboardRemove())
+    else:
+        lang = 'uz'
+        await mes.answer(text_client_reg()['ism'], reply_markup=ReplyKeyboardRemove())
     await ClientForm.ism.set()
 
 
@@ -23,7 +31,10 @@ async def name(mes: Message, state: FSMContext):
     await state.update_data(
         {'ism': mes.text}
     )
-    await mes.answer(text_client_reg()['familiya'])
+    if lang == 'uz':
+        await mes.answer(text_client_reg()['familiya'])
+    elif lang == 'ru':
+        await mes.answer(text_client_reg()['familiya_ru'])
     await ClientForm.next()
 
 
@@ -32,7 +43,10 @@ async def surname(mes: Message, state: FSMContext):
     await state.update_data(
         {"familiya": mes.text}
     )
-    await mes.answer(text_client_reg()['telefon'])
+    if lang == 'uz':
+        await mes.answer(text_client_reg()['telefon'])
+    else:
+        await mes.answer(text_client_reg()['telefon_ru'])
     await ClientForm.next()
 
 
@@ -41,13 +55,19 @@ async def get_phone(mes: Message, state: FSMContext):
     await state.update_data(
         {'telefon': f"998{mes.text}"}
     )
-    await mes.answer(text_client_reg()['prava'], reply_markup=prava)
+    if lang == 'uz':
+        await mes.answer(text_client_reg()['prava'], reply_markup=prava(lang))
+    else:
+        await mes.answer(text_client_reg()['prava_ru'], reply_markup=prava(lang))
     await ClientForm.next()
 
 
 @dp.message_handler(state=ClientForm.telefon, content_types='text')
 async def st(mes: Message):
-    await mes.answer(text_client_reg()['telefon_qayta'])
+    if lang == 'uz':
+        await mes.answer(text_client_reg()['telefon_qayta'])
+    else:
+        await mes.answer(text_client_reg()['telefon_qayta_ru'])
     await ClientForm.telefon.set()
 
 
@@ -59,43 +79,70 @@ async def get_cat(mes: Message, state: FSMContext):
     data = await state.get_data()
     res = requests.post(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     text = res.json()
-    await mes.answer(f"{data['ism']} {text['message']}\n", reply_markup=menu_client)
-    if mes.text == 'Бор':
-        await mes.answer(text_client_reg()['prava_bor'])
+    await mes.answer(f"{data['ism']} {text['message']}\n", reply_markup=menu_client(lang))
+    if (mes.text == 'Бор') or (mes.text == 'Есть'):
+        if lang == 'uz':
+            await mes.answer(text_client_reg()['prava_bor'])
+        else:
+            await mes.answer(text_client_reg()['prava_bor_ru'])
     else:
-        await mes.answer(text_client_reg()['prava_yuq'])
+        if lang == 'uz':
+            await mes.answer(text_client_reg()['prava_yuq'])
+        else:
+            await mes.answer(text_client_reg()['prava_yuq_ru'])
     await state.finish()
 
 
-@dp.message_handler(text="Профил")
+@dp.message_handler(text=["Профил", "Профиль"])
 async def get_profile(mes: Message):
     rp = requests.get(url=f"{BASE_URL}/client/{mes.from_user.id}/")
     res = rp.json()
-    text = f"Исмингиз: <b>{res['ism']}</b>\n"
-    text += f"Фамилиянгиз: <b>{res['familiya']}</b>\n"
-    text += f"Телефон рақамингиз: <b>{res['telefon']}</b>\n"
-    text += f"Ҳайдовчилик гувоҳномангиз: <b>{res['prava']}</b>"
-    await mes.answer(text, reply_markup=menu_client)
+    if lang == 'uz':
+        text = f"Исмингиз: <b>{res['ism']}</b>\n"
+        text += f"Фамилиянгиз: <b>{res['familiya']}</b>\n"
+        text += f"Телефон рақамингиз: <b>{res['telefon']}</b>\n"
+        text += f"Ҳайдовчилик гувоҳномангиз: <b>{res['prava']}</b>"
+    else:
+        text = f"Ваше имя: <b>{res['ism']}</b>\n"
+        text += f"Ваша фамилия: <b>{res['familiya']}</b>\n"
+        text += f"Ваш номер телефона: <b>{res['telefon']}</b>\n"
+        text += f"Ваши водительские права: <b>{res['prava']}</b>"
+    await mes.answer(text, reply_markup=menu_client(lang))
 
 
-@dp.message_handler(text="Профилни ўзгартириш")
+@dp.message_handler(text=["Профилни ўзгартириш", "Изменение профиля"])
 async def edit_profile(mes: Message):
-    await mes.answer("Нимани ўзгартирмоқчисиз?", reply_markup=client)
+    if lang == 'uz':
+        await mes.answer("Нимани ўзгартирмоқчисиз?", reply_markup=client(lang))
+    else:
+        await mes.answer("Что вы хотите изменить?", reply_markup=client(lang))
 
 
 @dp.callback_query_handler(text=['client:name', 'client:surname', 'client:phone', 'pra'])
 async def set_state(call: CallbackQuery):
     if call.data == 'client:name':
-        await call.message.answer(text_client_up()['ism'])
+        if lang == 'uz':
+            await call.message.answer(text_client_up()['ism'])
+        else:
+            await call.message.answer(text_client_up()['ism_ru'])
         await EditClient.ism.set()
     elif call.data == 'client:surname':
-        await call.message.answer(text_client_up()['familiya'])
+        if lang == 'uz':
+            await call.message.answer(text_client_up()['familiya'])
+        else:
+            await call.message.answer(text_client_up()['familiya_ru'])
         await EditClient.familiya.set()
     elif call.data == 'client:phone':
-        await call.message.answer(text_client_up()['telefon'])
+        if lang == 'uz':
+            await call.message.answer(text_client_up()['telefon'])
+        else:
+            await call.message.answer(text_client_up()['telefon_ru'])
         await EditClient.telefon.set()
     elif call.data == 'pra':
-        await call.message.answer(text_client_up()['prava'], reply_markup=prava)
+        if lang == 'uz':
+            await call.message.answer(text_client_up()['prava'], reply_markup=prava(lang))
+        else:
+            await call.message.answer(text_client_up()['prava_ru'], reply_markup=prava(lang))
         await EditClient.prava.set()
     await call.answer(cache_time=3)
 
@@ -105,7 +152,10 @@ async def set_name(mes: Message, state: FSMContext):
     data = {'ism': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Исмингиз {res['ism']} га ўзгартирилди!", reply_markup=menu_client)
+    if lang == 'uz':
+        await mes.answer(f"Исмингиз {res['ism']} га ўзгартирилди!", reply_markup=menu_client(lang))
+    else:
+        await mes.answer(f"Ваше имя {res['ism']} измененный!", reply_markup=menu_client(lang))
     await state.finish()
 
 
@@ -114,7 +164,10 @@ async def set_surname(mes: Message, state: FSMContext):
     data = {'familiya': mes.text}
     rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Фамилиянгиз {res['familiya']} га ўзгартирилди!", reply_markup=menu_client)
+    if lang == 'uz':
+        await mes.answer(f"Фамилиянгиз {res['familiya']} га ўзгартирилди!", reply_markup=menu_client(lang))
+    else:
+        await mes.answer(f"Ваша фамилия {res['familiya']} измененный!", reply_markup=menu_client(lang))
     await state.finish()
 
 
@@ -123,13 +176,19 @@ async def set_phone(mes: Message, state: FSMContext):
     data = {'telefon': f"998{mes.text}"}
     rp = requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     res = rp.json()
-    await mes.answer(f"Телефонгиз {res['telefon']} га ўзгартирилди!", reply_markup=menu_client)
+    if lang == 'uz':
+        await mes.answer(f"Телефонингиз {res['telefon']} га ўзгартирилди!", reply_markup=menu_client(lang))
+    else:
+        await mes.answer(f"Твой телефон {res['telefon']} измененный!", reply_markup=menu_client(lang))
     await state.finish()
 
 
 @dp.message_handler(content_types=['text'], state=EditClient.telefon)
 async def set_phone(mes: Message):
-    await mes.answer(text_client_up()['telefon_qayta'])
+    if lang == 'uz':
+        await mes.answer(text_client_up()['telefon_qayta'])
+    else:
+        await mes.answer(text_client_up()['telefon_qayta_ru'])
     await EditClient.telefon.set()
 
 
@@ -137,26 +196,38 @@ async def set_phone(mes: Message):
 async def set_cat(mes: Message, state: FSMContext):
     data = {'prava': mes.text}
     requests.patch(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
-    await mes.answer(f"Ҳайдовчилик гувоҳномангиз ўзгартирилди!", reply_markup=menu_client)
+    if lang == 'uz':
+        await mes.answer(f"Ҳайдовчилик гувоҳномангиз ўзгартирилди!", reply_markup=menu_client(lang))
+    else:
+        await mes.answer(f"Ваши водительские права были изменены!", reply_markup=menu_client(lang))
     await state.finish()
 
 
-@dp.message_handler(text="Машғулот")
+@dp.message_handler(text=["Машғулот", "Тренировка"])
 async def ses(mes: Message):
-    await mes.answer("Керакли бўлимни танланг 👇", reply_markup=action_session)
+    if lang == 'uz':
+        await mes.answer("Керакли бўлимни танланг 👇", reply_markup=action_session(lang))
+    else:
+        await mes.answer("Выберите нужный раздел 👇", reply_markup=action_session(lang))
 
 
-@dp.message_handler(text='⬅️Oртга')
+@dp.message_handler(text=['⬅️Oртга', '⬅️Назад'])
 async def ses(mes: Message):
-    await mes.answer("Керакли бўлимни танланг 👇", reply_markup=action_session)
+    if lang == 'uz':
+        await mes.answer("Керакли бўлимни танланг 👇", reply_markup=action_session(lang))
+    else:
+        await mes.answer("Выберите нужный раздел 👇", reply_markup=action_session(lang))
 
 
-@dp.message_handler(text="Машғулотлар рўйхати")
+@dp.message_handler(text=["Машғулотлар рўйхати", "Список занятий"])
 async def session(mes: Message):
-    await mes.answer("Машғулотлар рўйхатини танланг👇", reply_markup=sessions)
+    if lang == 'uz':
+        await mes.answer("Машғулотлар рўйхатини танланг👇", reply_markup=sessions(lang))
+    else:
+        await mes.answer("Выберите список тренировок👇", reply_markup=sessions(lang))
 
 
-@dp.message_handler(text="Бўлиши керак")
+@dp.message_handler(text=["Бўлиши керак", "Должен быть"])
 async def lesson(mes: Message):
     rp = requests.get(url=f"{BASE_URL}/session/{mes.from_user.id}")
     res = rp.json()
@@ -167,7 +238,7 @@ async def lesson(mes: Message):
                      reply_markup=create_after_sessions_for_cl(res, page=1))
 
 
-@dp.message_handler(text="Бўлиб утган")
+@dp.message_handler(text=["Бўлиб утган", "Прошедший"])
 async def lesson(mes: Message):
     rp = requests.get(url=f"{BASE_URL}/session/finished/{mes.from_user.id}")
     res = rp.json()
@@ -192,7 +263,10 @@ async def action(call: CallbackQuery):
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row,
                                      reply_markup=create_after_sessions_for_cl(res, page + 1))
     else:
-        await call.answer("Бу охирги сахифа!")
+        if lang == 'uz':
+            await call.answer("Бу охирги сахифа!")
+        else:
+            await call.answer("Это последняя страница!")
     await call.answer(cache_time=3)
 
 
@@ -210,7 +284,10 @@ async def action(call: CallbackQuery):
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row,
                                      reply_markup=create_after_sessions_for_cl(res, page - 1))
     else:
-        await call.answer("Бу биринчи сахифа!")
+        if lang == 'uz':
+            await call.answer("Бу биринчи сахифа!")
+        else:
+            await call.answer("Это первая страница!")
     await call.answer(cache_time=3)
 
 
@@ -228,7 +305,10 @@ async def action(call: CallbackQuery):
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
                                      reply_markup=before_sessions_for_cl(page + 1))
     else:
-        await call.answer("Бу охирги сахифа!")
+        if lang == 'uz':
+            await call.answer("Бу охирги сахифа!")
+        else:
+            await call.answer("Это последняя страница!")
     await call.answer(cache_time=3)
 
 
@@ -246,7 +326,10 @@ async def action(call: CallbackQuery):
         await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
                                      reply_markup=before_sessions_for_cl(page - 1))
     else:
-        await call.answer("Бу биринчи сахифа!")
+        if lang == 'uz':
+            await call.answer("Бу биринчи сахифа!")
+        else:
+            await call.answer("Это первая страница!")
     await call.answer(cache_time=3)
 
 
@@ -256,11 +339,14 @@ async def daa(call: CallbackQuery, state: FSMContext):
     await state.update_data(
         {'session_id': s_id}
     )
-    await call.message.answer("Керакли булимни танланг 👇", reply_markup=edit_session)
+    if lang == 'uz':
+        await call.message.answer("Керакли булимни танланг 👇", reply_markup=edit_session(lang))
+    else:
+        await call.message.answer("Выберите нужный раздел 👇", reply_markup=edit_session(lang))
     await call.answer(cache_time=1)
 
 
-@dp.message_handler(text='Машғулот манзилини олиш')
+@dp.message_handler(text=['Машғулот манзилини олиш', "Получение адреса для обучения"])
 async def delete(mes: Message, state: FSMContext):
     s_id = await state.get_data()
     rp = requests.get(url=f"{BASE_URL}/session/location/{s_id['session_id']}/")
@@ -269,50 +355,75 @@ async def delete(mes: Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(text='Машғулотни бекор килиш')
+@dp.message_handler(text=['Машғулотни бекор килиш', 'Отменить тренировку'])
 async def delete(mes: Message, state: FSMContext):
     s_id = await state.get_data()
     rp = requests.delete(url=f"{BASE_URL}/session/detail/{s_id['session_id']}/")
     rs = rp.json()
     if rp.status_code == 200:
-        await mes.answer("Машғулот ўчирилди", reply_markup=menu_client)
-        await notify_session_deleted(instructor=rs['id1'], time=rs['vaqt'])
+        if lang == 'uz':
+            await mes.answer("Машғулот ўчирилди", reply_markup=menu_client(lang))
+        else:
+            await mes.answer("Тренировка удалена", reply_markup=menu_client(lang))
+        await notify_session_deleted(instructor=rs['id1'], time=rs['vaqt'], lang=lang)
     else:
-        await mes.answer("Нимадир хато кетди бошқатдан ўриниб кўринг!")
+        if lang == 'uz':
+            await mes.answer("Нимадир хато кетди бошқатдан ўриниб кўринг!")
+        else:
+            await mes.answer("Что-то пошло не так, попробуйте заменить другое!")
     await state.finish()
 
 
-@dp.message_handler(text="Бош меню")
+@dp.message_handler(text=["Бош меню", "Главное меню"])
 async def menu(mes: Message):
-    await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client)
+    if lang == 'uz':
+        await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client(lang))
+    else:
+        await mes.answer("Выберите нужный раздел 👇", reply_markup=menu_client(lang))
 
 
-@dp.message_handler(text="Машғулот нархлари")
+@dp.message_handler(text=["Машғулот нархлари", "Цены на обучение"])
 async def price(mes: Message):
     r = requests.get(url=f"{BASE_URL}/session/price/list/")
     pr = r.json()
     text = ""
-    for i in pr:
-        text += f"{i['category']} тоифа - {i['price']} сўм соатига\n"
+    if lang == 'uz':
+        for i in pr:
+            text += f"{i['category']} тоифа - {i['price']} сўм соатига\n"
+    else:
+        for i in pr:
+            text += f"{i['category']} категория - {i['price']} в час\n"
     await mes.answer(text)
 
 
-@dp.message_handler(text="Профилни ўчириш")
+@dp.message_handler(text=["Профилни ўчириш", "Удалить профиль"])
 async def a(mes: Message):
-    await mes.answer('Профилингизни ўчирмоқчимисиз?', reply_markup=profile_delete)
+    if lang == 'uz':
+        await mes.answer('Профилингизни ўчирмоқчимисиз?', reply_markup=profile_delete(lang))
+    else:
+        await mes.answer('Хотите удалить свой профиль?', reply_markup=profile_delete(lang))
     await DeleteCl.yes_or_no.set()
 
 
 @dp.message_handler(state=DeleteCl.yes_or_no)
 async def delete_profile(mes: Message, state: FSMContext):
-    if mes.text == 'Ҳа':
+    if (mes.text == 'Ҳа') or (mes.text == 'Да'):
         rp = requests.delete(url=f"{BASE_URL}/client/delete/{mes.from_user.id}/")
         if rp.status_code == 204:
-            await mes.answer("Профилингиз ўчирилди", reply_markup=ReplyKeyboardRemove())
+            if lang == 'uz':
+                await mes.answer("Профилингиз ўчирилди", reply_markup=ReplyKeyboardRemove())
+            else:
+                await mes.answer("Ваш профиль был удален", reply_markup=ReplyKeyboardRemove())
         else:
-            await mes.answer("Нимадир хато кетди қайтадан ўриниб кўринг!")
-    elif mes.text == 'Йўқ':
-        await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client)
+            if lang == 'uz':
+                await mes.answer("Нимадир хато кетди қайтадан ўриниб кўринг!")
+            else:
+                await mes.answer("Попробуйте еще раз, что-то пошло не так!")
+    elif (mes.text == 'Йўқ') or (mes.text == 'Нет'):
+        if lang == 'uz':
+            await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client(lang))
+        else:
+            await mes.answer("Выберите нужный раздел 👇", reply_markup=menu_client(lang))
     await state.finish()
 
 
@@ -332,5 +443,8 @@ async def rate(call: CallbackQuery):
     rp = requests.patch(url=f"{BASE_URL}/instructor/rating/",
                         data={'client': call.from_user.id, 'rate': rt})
     res = rp.json()
-    await call.message.answer(f"{res['message']}", reply_markup=menu_client)
+    if lang == 'uz':
+        await call.message.answer(f"{res['message']}", reply_markup=menu_client(lang))
+    else:
+        await call.message.answer(f"{res['message_ru']}", reply_markup=menu_client(lang))
     await call.answer(cache_time=3)

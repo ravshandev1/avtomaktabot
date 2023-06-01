@@ -2,62 +2,153 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 import requests
 from data.config import BASE_URL
 
-usertype = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Ўрганувчи'),
-            KeyboardButton(text='Инструктор'),
-        ]
-    ],
-    resize_keyboard=True
-)
-card_btn = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Ҳа'),
-            KeyboardButton(text="Йўқ"),
-        ],
-    ],
-    resize_keyboard=True
-)
-prava = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Бор'),
-            KeyboardButton(text="Йўқ"),
-        ],
-    ],
-    resize_keyboard=True
-)
-genders = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Еркак'),
-            KeyboardButton(text='Аёл'),
-        ]
-    ],
-    resize_keyboard=True
-)
-str_btn = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Бошлаш'),
-            KeyboardButton(text='Машғулотни бекор килиш'),
-        ],
-        [
-            KeyboardButton(text="⬅️Oртга"),
-        ]
-    ],
-    resize_keyboard=True
-)
-stp_btn = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            KeyboardButton(text='Тугатиш')
-        ]
-    ],
-    resize_keyboard=True
-)
+
+def usertype(lang: str):
+    if lang == 'uz':
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Ўрганувчи'),
+                    KeyboardButton(text='Инструктир'),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    else:
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Ученик'),
+                    KeyboardButton(text='Инструктор'),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    return markup
+
+
+def card_btn(lang: str):
+    if lang == 'uz':
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Ҳа'),
+                    KeyboardButton(text="Йўқ"),
+                ],
+            ],
+            resize_keyboard=True
+        )
+    else:
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Да'),
+                    KeyboardButton(text='Нет'),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    return markup
+
+
+def prava(lang: str):
+    if lang == 'uz':
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Бор'),
+                    KeyboardButton(text="Йўқ"),
+                ],
+            ],
+            resize_keyboard=True
+        )
+    else:
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Есть'),
+                    KeyboardButton(text='Нет'),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    return markup
+
+
+def genders(lang: str):
+    if lang == 'uz':
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Еркак'),
+                    KeyboardButton(text='Аёл'),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    else:
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Мужчина'),
+                    KeyboardButton(text='Женщины'),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    return markup
+
+
+def str_btn(lang: str):
+    if lang == 'uz':
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Бошлаш'),
+                    KeyboardButton(text='Машғулотни бекор килиш'),
+                ],
+                [
+                    KeyboardButton(text="⬅️Oртга"),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    else:
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Начать'),
+                    KeyboardButton(text='Отменить тренировку'),
+                ],
+                [
+                    KeyboardButton(text="⬅️Назад"),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    return markup
+
+
+def stp_btn(lang: str):
+    if lang == 'uz':
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Тугатиш')
+                ]
+            ],
+            resize_keyboard=True
+        )
+    else:
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Заканчивать')
+                ]
+            ],
+            resize_keyboard=True
+        )
+    return markup
 
 
 def regions():
