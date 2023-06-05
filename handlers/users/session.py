@@ -348,16 +348,24 @@ async def get_session(call: CallbackQuery):
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
             row_2 += f"{i}. {ses['client']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
-        await call.message.answer(f"Натижа {res['count']} тa\n" + row_2,
-                                  reply_markup=create_after_sessions_for_ins(res, page=1))
+        if lang == 'uz':
+            await call.message.answer(f"Натижа {res['count']} тa\n" + row_2,
+                                      reply_markup=create_after_sessions_for_ins(res, page=1))
+        else:
+            await call.message.answer(f"Результат {res['count']} раз\n" + row_2,
+                                      reply_markup=create_after_sessions_for_ins(res, page=1))
     elif call.data == 'before':
         r = requests.get(url=f"{BASE_URL}/session/finished/{call.from_user.id}/")
         res = r.json()
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
             row_2 += f"{i}. {ses['client']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
-        await call.message.answer(f"Натижа {res['count']} тa\n" + row_2,
-                                  reply_markup=before_sessions_for_ins(page=1))
+        if lang == 'uz':
+            await call.message.answer(f"Натижа {res['count']} тa\n" + row_2,
+                                      reply_markup=before_sessions_for_ins(page=1))
+        else:
+            await call.message.answer(f"Результат {res['count']} раз\n" + row_2,
+                                      reply_markup=before_sessions_for_ins(page=1))
     await call.answer(cache_time=3)
 
 
@@ -372,8 +380,12 @@ async def action(call: CallbackQuery):
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
             row_2 += f"{i}. {ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
-        await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
-                                     reply_markup=create_after_sessions_for_ins(res, page + 1))
+        if lang == 'uz':
+            await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
+                                         reply_markup=create_after_sessions_for_ins(res, page + 1))
+        else:
+            await call.message.edit_text(f"Результат {res['count']} раз\n" + row_2,
+                                         reply_markup=create_after_sessions_for_ins(res, page + 1))
     else:
         if lang == 'uz':
             await call.answer("Бу охирги сахифа!")
@@ -393,8 +405,12 @@ async def action(call: CallbackQuery):
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
             row_2 += f"{i}. {ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
-        await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
-                                     reply_markup=create_after_sessions_for_ins(res, page - 1))
+        if lang == 'uz':
+            await call.message.edit_text(f"Натижа {res['count']} тa\n" + row_2,
+                                         reply_markup=create_after_sessions_for_ins(res, page - 1))
+        else:
+            await call.message.edit_text(f"Результат {res['count']} раз\n" + row_2,
+                                         reply_markup=create_after_sessions_for_ins(res, page - 1))
     else:
         if lang == 'uz':
             await call.answer("Бу биринчи сахифа!")
@@ -489,8 +505,12 @@ async def action(call: CallbackQuery):
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
             row_2 += f"{i}.{ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
-        await call.message.edit_text(f"Натижа {res['count']} та\n" + row_2,
-                                     reply_markup=before_sessions_for_ins(page + 1))
+        if lang == 'uz':
+            await call.message.edit_text(f"Натижа {res['count']} та\n" + row_2,
+                                         reply_markup=before_sessions_for_ins(page + 1))
+        else:
+            await call.message.edit_text(f"Результат {res['count']} раз\n" + row_2,
+                                         reply_markup=before_sessions_for_ins(page + 1))
     else:
         if lang == 'uz':
             await call.answer("Бу охирги сахифа!")
@@ -510,8 +530,12 @@ async def action(call: CallbackQuery):
         row_2 = ""
         for (i, ses) in zip(range(1, 6), res['results']):
             row_2 += f"{i}.{ses['client']} {ses['qayerdan']} {ses['vaqt']}\n     {ses['c_telefoni']}\n"
-        await call.message.edit_text(f"Натижа {res['count']} та\n" + row_2,
-                                     reply_markup=before_sessions_for_ins(page - 1))
+        if lang == 'uz':
+            await call.message.edit_text(f"Натижа {res['count']} та\n" + row_2,
+                                         reply_markup=before_sessions_for_ins(page - 1))
+        else:
+            await call.message.edit_text(f"Результат {res['count']} раз\n" + row_2,
+                                         reply_markup=before_sessions_for_ins(page - 1))
     else:
         if lang == 'uz':
             await call.answer("Бу биринчи сахифа!")
