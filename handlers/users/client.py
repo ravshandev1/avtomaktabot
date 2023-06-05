@@ -155,7 +155,7 @@ async def set_name(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Исмингиз {res['ism']} га ўзгартирилди!", reply_markup=menu_client(lang))
     else:
-        await mes.answer(f"Ваше имя {res['ism']} измененный!", reply_markup=menu_client(lang))
+        await mes.answer(f"Ваше имя изменён {res['ism']}", reply_markup=menu_client(lang))
     await state.finish()
 
 
@@ -167,7 +167,7 @@ async def set_surname(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Фамилиянгиз {res['familiya']} га ўзгартирилди!", reply_markup=menu_client(lang))
     else:
-        await mes.answer(f"Ваша фамилия {res['familiya']} измененный!", reply_markup=menu_client(lang))
+        await mes.answer(f"Ваша фамилия изменён {res['familiya']}", reply_markup=menu_client(lang))
     await state.finish()
 
 
@@ -179,7 +179,7 @@ async def set_phone(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Телефонингиз {res['telefon']} га ўзгартирилди!", reply_markup=menu_client(lang))
     else:
-        await mes.answer(f"Твой телефон {res['telefon']} измененный!", reply_markup=menu_client(lang))
+        await mes.answer(f"Твой телефон изменён {res['telefon']}", reply_markup=menu_client(lang))
     await state.finish()
 
 

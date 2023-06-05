@@ -321,7 +321,7 @@ async def set_name(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Исмингиз <b>{res['ism']}</b> га ўзгартирилди!", reply_markup=menu_instructor(lang))
     else:
-        await mes.answer(f"Ваше имя <b>{res['ism']}</b> измененный!", reply_markup=menu_instructor(lang))
+        await mes.answer(f"Ваше имя изменён <b>{res['ism']}</b>", reply_markup=menu_instructor(lang))
     await state.finish()
 
 
@@ -333,7 +333,7 @@ async def set_surname(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Фамилиянгиз <b>{res['familiya']}</b> га ўзгартирилди!", reply_markup=menu_instructor(lang))
     else:
-        await mes.answer(f"Ваша фамилия <b>{res['familiya']}</b> измененный!", reply_markup=menu_instructor(lang))
+        await mes.answer(f"Ваша фамилия изменён <b>{res['familiya']}</b>", reply_markup=menu_instructor(lang))
     await state.finish()
 
 
@@ -356,7 +356,7 @@ async def set_phone(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Телефонгиз <b>{res['telefon']}</b> га ўзгартирилди!", reply_markup=menu_instructor(lang))
     else:
-        await mes.answer(f"Ваш номер телефона <b>{res['telefon']}</b> измененный!", reply_markup=menu_instructor(lang))
+        await mes.answer(f"Ваш номер телефона изменён <b>{res['telefon']}</b>", reply_markup=menu_instructor(lang))
     await state.finish()
 
 
@@ -377,7 +377,7 @@ async def set_region(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Яшаш туманингиз <b>{res['tuman']}</b> га ўзгартирилди!", reply_markup=menu_instructor(lang))
     else:
-        await mes.answer(f"Ваш жилой район <b>{res['tuman']}</b> измененный!", reply_markup=menu_instructor(lang))
+        await mes.answer(f"Ваш жилой район изменён <b>{res['tuman']}</b>", reply_markup=menu_instructor(lang))
     await state.finish()
 
 
@@ -389,7 +389,7 @@ async def set_cat(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Тоифанингиз <b>{res['toifa_name']}</b> га ўзгартирилди!", reply_markup=menu_instructor(lang))
     else:
-        await mes.answer(f"Ваша категория <b>{res['toifa_name']}</b> измененный!", reply_markup=menu_instructor(lang))
+        await mes.answer(f"Ваша категория изменён <b>{res['toifa_name']}</b>", reply_markup=menu_instructor(lang))
     await state.finish()
 
 
@@ -403,7 +403,7 @@ async def set_cat(mes: Message, state: FSMContext):
         await mes.answer(f"Мошинангиз рақами <b>{res['nomeri']}</b> га ўзгартирилди!",
                          reply_markup=menu_instructor(lang))
     else:
-        await mes.answer(f"Номер вашей машины <b>{res['nomeri']}</b> измененный!",
+        await mes.answer(f"Номер вашей машины изменён <b>{res['nomeri']}</b>",
                          reply_markup=menu_instructor(lang))
     await state.finish()
 
@@ -425,7 +425,7 @@ async def set_cat(mes: Message, state: FSMContext):
     if lang == 'uz':
         await mes.answer(f"Мошинангиз <b>{res['moshina']}</b> га ўзгартирилди!", reply_markup=menu_instructor(lang))
     else:
-        await mes.answer(f"Ваша машина <b>{res['moshina']}</b> измененный!", reply_markup=menu_instructor(lang))
+        await mes.answer(f"Ваша машина изменён <b>{res['moshina']}</b>", reply_markup=menu_instructor(lang))
     await state.finish()
 
 
