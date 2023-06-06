@@ -53,10 +53,12 @@ async def start(call: types.CallbackQuery):
             await call.message.answer("Выберите нужный раздел 👇", reply_markup=menu_instructor(lang))
     else:
         if call.data == 'uz':
+            lang = 'uz'
             await call.message.answer(
                 f"Ассалому алайкум, {call.from_user.full_name}!\nАвтоинструктор ботга хуш келибсиз. Ботимиздан ким сифатида руйхатдан утмокчисиз?",
                 reply_markup=usertype(lang))
         elif call.data == 'ru':
+            lang = 'ru'
             await call.message.answer(
-                f"Ассалому алайкум, {call.from_user.full_name}!\nДобро пожаловать в autoinstructor bot. Кто ты такой из королевства в качестве плотника у нашего крестного отца?",
+                f"Ассалому алайкум, {call.from_user.full_name}!\nДобро пожаловать в Автоинструктор бот. Кем вы хотите регистрироваться в нашем боте?",
                 reply_markup=usertype(lang))

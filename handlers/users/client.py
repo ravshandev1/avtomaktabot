@@ -437,7 +437,7 @@ async def delete_profile(mes: Message, state: FSMContext):
             if lang == 'uz':
                 await mes.answer("Профилингиз ўчирилди", reply_markup=ReplyKeyboardRemove())
             else:
-                await mes.answer("Ваш профиль был удален", reply_markup=ReplyKeyboardRemove())
+                await mes.answer("Ваш профиль удален", reply_markup=ReplyKeyboardRemove())
         else:
             if lang == 'uz':
                 await mes.answer("Нимадир хато кетди қайтадан ўриниб кўринг!")
