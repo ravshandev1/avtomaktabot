@@ -9,7 +9,7 @@ def usertype(lang: str):
             keyboard=[
                 [
                     KeyboardButton(text='Ўрганувчи'),
-                    KeyboardButton(text='Инструктир'),
+                    KeyboardButton(text='Инструктор '),
                 ]
             ],
             resize_keyboard=True
