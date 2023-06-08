@@ -79,7 +79,10 @@ async def get_cat(mes: Message, state: FSMContext):
     data = await state.get_data()
     res = requests.post(url=f"{BASE_URL}/client/{mes.from_user.id}/", data=data)
     text = res.json()
-    await mes.answer(f"{data['ism']} {text['message']}\n", reply_markup=menu_client(lang))
+    if lang == 'uz':
+        await mes.answer(f"{data['ism']} {text['message']}\n", reply_markup=menu_client(lang))
+    else:
+        await mes.answer(f"{data['ism']} {text['message_ru']}\n", reply_markup=menu_client(lang))
     if (mes.text == 'Бор') or (mes.text == 'Есть'):
         if lang == 'uz':
             await mes.answer(text_client_reg()['prava_bor'])
