@@ -55,10 +55,10 @@ async def start(call: types.CallbackQuery):
         if call.data == 'uz':
             lang = 'uz'
             await call.message.answer(
-                f"Ассалому алайкум, {call.from_user.full_name}!\nАвтоинструктор ботга хуш келибсиз. Ботимиздан ким сифатида руйхатдан утмокчисиз?",
+                f"Ассалому алайкум, {call.from_user.full_name}!\nАвтоинструктор ботга хуш келибсиз. Ботимиздан ким сифатида рўйхатдан ўтмокчисиз?",
                 reply_markup=usertype(lang))
         elif call.data == 'ru':
             lang = 'ru'
             await call.message.answer(
-                f"Ассалому алайкум, {call.from_user.full_name}!\nДобро пожаловать в Автоинструктор бот. Кем вы хотите регистрироваться в нашем боте?",
+                f"Здравствуйте, {call.from_user.full_name}!\nДобро пожаловать в Автоинструктор бот. Кем вы хотите регистрироваться в нашем боте?",
                 reply_markup=usertype(lang))
