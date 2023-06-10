@@ -206,7 +206,7 @@ async def set_cat(mes: Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(text=["Машғулот", "Тренировка"])
+@dp.message_handler(text=["Машғулот", "Занятие"])
 async def ses(mes: Message):
     if lang == 'uz':
         await mes.answer("Керакли бўлимни танланг 👇", reply_markup=action_session(lang))

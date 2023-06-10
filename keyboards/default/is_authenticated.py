@@ -74,7 +74,7 @@ def menu_client(lang: str):
                 ],
                 [
                     KeyboardButton(text="Удалить профиль"),
-                    KeyboardButton(text="Тренировка"),
+                    KeyboardButton(text="Занятие"),
                 ],
                 [
                     KeyboardButton(text='Цены на обучение')

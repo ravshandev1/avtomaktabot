@@ -14,10 +14,10 @@ import re
 lang = ''
 
 
-@dp.message_handler(text=['Инструктор', 'Инструктор '])
+@dp.message_handler(text=['Инструктор', 'Ўргатувчи'])
 async def register(mes: Message):
     global lang
-    if mes.text == 'Инструктор ':
+    if mes.text == 'Ўргатувчи':
         lang = 'uz'
         await mes.answer(text_ins_reg()['ism'], reply_markup=ReplyKeyboardRemove())
     elif mes.text == 'Инструктор':

@@ -9,7 +9,7 @@ def usertype(lang: str):
             keyboard=[
                 [
                     KeyboardButton(text='Ўрганувчи'),
-                    KeyboardButton(text='Инструктор '),
+                    KeyboardButton(text='Ўргатувчи'),
                 ]
             ],
             resize_keyboard=True
@@ -143,7 +143,7 @@ def stp_btn(lang: str):
         markup = ReplyKeyboardMarkup(
             keyboard=[
                 [
-                    KeyboardButton(text='Заканчивать')
+                    KeyboardButton(text='Завершить')
                 ]
             ],
             resize_keyboard=True

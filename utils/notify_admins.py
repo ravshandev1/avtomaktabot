@@ -18,7 +18,7 @@ async def notify(instructor: int, lang: str):
     if lang == 'uz':
         await dp.bot.send_message(instructor, "Сизга янги машғулот банд қилинди")
     else:
-        await dp.bot.send_message(instructor, "Вы заняты новым тренингом")
+        await dp.bot.send_message(instructor, "Вам назначили новое заятие")
 
 
 async def notify_session_deleted(instructor: int, time: str, lang: str):

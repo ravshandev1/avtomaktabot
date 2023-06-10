@@ -66,12 +66,19 @@ async def get_category(mes: Message, state: FSMContext):
     cat = await state.get_data()
     res = requests.get(url=f"{BASE_URL}/session/?tum={cat['tuman']}&cat={cat['toifa']}")
     genders = res.json()
+    gdr = [i['jins'] for i in genders]
     markup = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
-    for i in genders:
-        markup.insert(KeyboardButton(text=f"{i['jins']}"))
     if lang == 'uz':
+        if ('Мужчина' in gdr) or ('Еркак' in gdr):
+            markup.insert(KeyboardButton(text=f"Еркак"))
+        if ('Женщины' in gdr) or ('Аёл' in gdr):
+            markup.insert(KeyboardButton(text=f"Аёл"))
         await mes.answer(text_ses()['jins'], reply_markup=markup)
     else:
+        if ('Мужчина' in gdr) or ('Еркак' in gdr):
+            markup.insert(KeyboardButton(text=f"Мужчина"))
+        if ('Женщины' in gdr) or ('Аёл' in gdr):
+            markup.insert(KeyboardButton(text=f"Женщины"))
         await mes.answer(text_ses()['jins_ru'], reply_markup=markup)
     await SessionForm.next()
 
@@ -449,7 +456,7 @@ async def get_ses(mes: Message, state: FSMContext):
         if lang == 'uz':
             await mes.answer("Вақт кетди\nТугатиш тугмасини босиш эсингиздан чиқмасин!!!", reply_markup=stp_btn(lang))
         else:
-            await mes.answer("Время ушло\nНе забудьте нажать кнопку Готово!!!", reply_markup=stp_btn(lang))
+            await mes.answer("Время ушло\nНе забудьте нажать кнопку Завершить!!!", reply_markup=stp_btn(lang))
         await SessionEdit.next()
     elif (mes.text == '⬅️Oртга') or (mes.text == '⬅️Назад'):
         if lang == 'uz':
@@ -459,7 +466,7 @@ async def get_ses(mes: Message, state: FSMContext):
         await state.finish()
 
 
-@dp.message_handler(text=['Тугатиш', "Заканчивать"], state=SessionEdit.finish)
+@dp.message_handler(text=['Тугатиш', "Завершить"], state=SessionEdit.finish)
 async def finish(mes: Message, state: FSMContext):
     s_id = await state.get_data()
     r = requests.get(url=f"{BASE_URL}/session/price/?s_id={s_id['session_id']}")
@@ -488,7 +495,7 @@ async def finish(mes: Message, state: FSMContext):
         # await mes.answer(f"{summa} сўм бўлди\nСизнинг балансенингиз {rs['balance']} сўм", reply_markup=menu_instructor)
         await mes.answer(f"{summa} сум стал", reply_markup=menu_instructor(lang))
         await dp.bot.send_message(rs['client'],
-                                  f"{summa} сум стал\nОцените прибор по значению от 1 до 5!",
+                                  f"Стоимость занятие {summa} сум\nОцените прибор по значению от 1 до 5!",
                                   reply_markup=rate)
     requests.post(url=f"{BASE_URL}/instructor/rating/", data={'instructor': mes.from_user.id, 'client': rs['client']})
     await state.finish()
