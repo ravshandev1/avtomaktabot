@@ -478,7 +478,7 @@ async def finish(mes: Message, state: FSMContext):
         if lang == 'uz':
             await mes.answer("Тугатишни босиш есингиздан чиқиб кетди вақтни 2 соат бўлганида тугатдим!!!")
         else:
-            await mes.answer("Нажав кнопку Готово, вы не в своем уме, я закончил время, когда было 2 часа!!!")
+            await mes.answer("Нажав кнопку Завершить, вы не в своем уме, я закончил время, когда было 2 часа!!!")
     summa = minute * price
     # if res['qayerdan'] == 'Уйдан':
     #     summa += 15000
@@ -495,7 +495,7 @@ async def finish(mes: Message, state: FSMContext):
         # await mes.answer(f"{summa} сўм бўлди\nСизнинг балансенингиз {rs['balance']} сўм", reply_markup=menu_instructor)
         await mes.answer(f"{summa} сум стал", reply_markup=menu_instructor(lang))
         await dp.bot.send_message(rs['client'],
-                                  f"Стоимость занятие {summa} сум\nОцените прибор по значению от 1 до 5!",
+                                  f"Стоимость занятие {summa} сум\nСтавьте оценку!",
                                   reply_markup=rate)
     requests.post(url=f"{BASE_URL}/instructor/rating/", data={'instructor': mes.from_user.id, 'client': rs['client']})
     await state.finish()
