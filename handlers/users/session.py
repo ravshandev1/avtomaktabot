@@ -493,7 +493,7 @@ async def finish(mes: Message, state: FSMContext):
                                   reply_markup=rate)
     else:
         # await mes.answer(f"{summa} сўм бўлди\nСизнинг балансенингиз {rs['balance']} сўм", reply_markup=menu_instructor)
-        await mes.answer(f"{summa} сум стал", reply_markup=menu_instructor(lang))
+        await mes.answer(f"Стоимость занятие {summa}", reply_markup=menu_instructor(lang))
         await dp.bot.send_message(rs['client'],
                                   f"Стоимость занятие {summa} сум\nСтавьте оценку!",
                                   reply_markup=rate)
