@@ -8,7 +8,7 @@ def create_callback_data(action, year, month, day):
     return action + ";" + str(year) + ";" + str(month) + ";" + str(day)
 
 
-def create_calendar(year=None, month=None):
+def create_calendar(lang=None, year=None, month=None):
     """
     Create an inline keyboard with the provided year and month
     :param int year: Year to use in the calendar, if None the current year is used.
@@ -20,6 +20,8 @@ def create_calendar(year=None, month=None):
         year = now.year
     if month is None:
         month = now.month
+    if lang is None:
+        lang = 'ru'
     data_ignore = create_callback_data("IGNORE", year, month, 0)
     keyboard = list()
     # First row - Month and Year
@@ -44,6 +46,13 @@ def create_calendar(year=None, month=None):
     row = list()
     row.append(InlineKeyboardButton("<<", callback_data=create_callback_data("PREV-MONTH", year, month, day)))
     row.append(InlineKeyboardButton(">>", callback_data=create_callback_data("NEXT-MONTH", year, month, day)))
+    keyboard.append(row)
+    # Back button
+    row = list()
+    if lang == 'uz':
+        row.append(InlineKeyboardButton("⬅️Oртга", callback_data=create_callback_data("⬅️Oртга", year, month, day)))
+    else:
+        row.append(InlineKeyboardButton("⬅️Назад", callback_data=create_callback_data("⬅️Назад", year, month, day)))
     keyboard.append(row)
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
