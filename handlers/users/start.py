@@ -60,5 +60,5 @@ async def start(call: types.CallbackQuery):
         elif call.data == 'ru':
             lang = 'ru'
             await call.message.answer(
-                f"Здравствуйте, {call.from_user.full_name}!\nДобро пожаловать в Автоинструктор бот.Выберите для себя нужный раздел",
+                f"Здравствуйте, {call.from_user.full_name}!\nДобро пожаловать в Автоинструктор бот. Выберите для себя нужный раздел",
                 reply_markup=usertype(lang))
