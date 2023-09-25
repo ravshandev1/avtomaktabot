@@ -14,13 +14,13 @@ import re
 lang = ''
 
 
-@dp.message_handler(text=['Инструктор', 'Ўргатувчи'])
+@dp.message_handler(text=['Регистрация в виде инструктора', 'Инструктор сифатида рўйхатдан ўтиш'])
 async def register(mes: Message):
     global lang
-    if mes.text == 'Ўргатувчи':
+    if mes.text == 'Инструктор сифатида рўйхатдан ўтиш':
         lang = 'uz'
         await mes.answer(text_ins_reg()['ism'], reply_markup=ReplyKeyboardRemove())
-    elif mes.text == 'Инструктор':
+    elif mes.text == 'Регистрация в виде инструктора':
         lang = 'ru'
         await mes.answer(text_ins_reg()['ism_ru'], reply_markup=ReplyKeyboardRemove())
     await InstructorForm.ism.set()
@@ -440,9 +440,9 @@ async def set_cat(mes: Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(text=["👨‍✈️Машғулотлар рўйхати", "👨‍✈️Список занятий"])
-async def get_sessions(mes: Message):
-    if lang == 'uz':
-        await mes.answer("Машғулотлар рўйхатини танланг👇", reply_markup=sessions(lang))
-    else:
-        await mes.answer("Выберите список тренировок👇", reply_markup=sessions(lang))
+# @dp.message_handler(text=["👨‍✈️Машғулотлар рўйхати", "👨‍✈️Список занятий"])
+# async def get_sessions(mes: Message):
+#     if lang == 'uz':
+#         await mes.answer("Машғулотлар рўйхатини танланг👇", reply_markup=sessions(lang))
+#     else:
+#         await mes.answer("Выберите список тренировок👇", reply_markup=sessions(lang))

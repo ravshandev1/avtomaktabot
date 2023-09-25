@@ -17,3 +17,7 @@ class EditClient(StatesGroup):
 
 class DeleteCl(StatesGroup):
     yes_or_no = State()
+
+
+class Info(StatesGroup):
+    tm = State()

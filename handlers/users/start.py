@@ -14,12 +14,12 @@ lang = ''
 async def stt(mes: types.Message):
     res = requests.get(url=f"{BASE_URL}/session/user/?id={mes.from_user.id}")
     r = res.json()
-    if r['message'] == "Client":
-        if lang == 'ru':
-            await mes.answer("Выберите нужный раздел 👇", reply_markup=menu_client(lang))
-        else:
-            await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client(lang))
-    elif r['message'] == "Instructor":
+    # if r['message'] == "Client":
+    #     if lang == 'ru':
+    #         await mes.answer("Выберите нужный раздел 👇", reply_markup=menu_client(lang))
+    #     else:
+    #         await mes.answer("Керакли булимни танланг 👇", reply_markup=menu_client(lang))
+    if r['message'] == "Instructor":
         if lang == 'ru':
             await mes.answer("Выберите нужный раздел 👇", reply_markup=menu_instructor(lang))
         else:
@@ -37,14 +37,14 @@ async def start(call: types.CallbackQuery):
     await call.message.delete()
     await call.answer(cache_time=3)
     global lang
-    if r['message'] == "Client":
-        if call.data == 'uz':
-            lang = 'uz'
-            await call.message.answer("Керакли булимни танланг 👇", reply_markup=menu_client(lang))
-        elif call.data == 'ru':
-            lang = 'ru'
-            await call.message.answer("Выберите нужный раздел 👇", reply_markup=menu_client(lang))
-    elif r['message'] == "Instructor":
+    # if r['message'] == "Client":
+    #     if call.data == 'uz':
+    #         lang = 'uz'
+    #         await call.message.answer("Керакли булимни танланг 👇", reply_markup=menu_client(lang))
+    #     elif call.data == 'ru':
+    #         lang = 'ru'
+    #         await call.message.answer("Выберите нужный раздел 👇", reply_markup=menu_client(lang))
+    if r['message'] == "Instructor":
         if call.data == 'uz':
             lang = 'uz'
             await call.message.answer("Керакли булимни танланг 👇", reply_markup=menu_instructor(lang))
@@ -55,10 +55,10 @@ async def start(call: types.CallbackQuery):
         if call.data == 'uz':
             lang = 'uz'
             await call.message.answer(
-                f"Ассалому алайкум, {call.from_user.full_name}!\nАвтоинструктор ботга хуш келибсиз. Ботимиздан ким сифатида рўйхатдан ўтмокчисиз?",
+                f"Ассалому алайкум, {call.from_user.full_name}!\nАвтоинструктор ботга хуш келибсиз. Ботимиздан фойдаланиш учун ўзингизга керакли бўлимни танланг.",
                 reply_markup=usertype(lang))
         elif call.data == 'ru':
             lang = 'ru'
             await call.message.answer(
-                f"Здравствуйте, {call.from_user.full_name}!\nДобро пожаловать в Автоинструктор бот. Кем вы хотите регистрироваться в нашем боте?",
+                f"Здравствуйте, {call.from_user.full_name}!\nДобро пожаловать в Автоинструктор бот.Выберите для себя нужный раздел",
                 reply_markup=usertype(lang))

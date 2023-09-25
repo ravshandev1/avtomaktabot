@@ -8,8 +8,11 @@ def usertype(lang: str):
         markup = ReplyKeyboardMarkup(
             keyboard=[
                 [
-                    KeyboardButton(text='Ўрганувчи'),
-                    KeyboardButton(text='Ўргатувчи'),
+                    KeyboardButton(text='Маълумот олиш'),
+                    KeyboardButton(text='Инструктор сифатида рўйхатдан ўтиш'),
+                ],
+                [
+                    KeyboardButton(text='Тилни ўзгартириш'),
                 ]
             ],
             resize_keyboard=True
@@ -18,8 +21,49 @@ def usertype(lang: str):
         markup = ReplyKeyboardMarkup(
             keyboard=[
                 [
-                    KeyboardButton(text='Ученик'),
-                    KeyboardButton(text='Инструктор'),
+                    KeyboardButton(text='Получение информации'),
+                    KeyboardButton(text='Регистрация в виде инструктора'),
+                ],
+                [
+                    KeyboardButton(text='Изменить язык'),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    return markup
+
+
+def info_btn(lang: str):
+    if lang == 'uz':
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Инструкторлар ҳақида маълумотлар'),
+                    KeyboardButton(text='Онлайн'),
+                ],
+                [
+                    KeyboardButton(text="Тест бўйича маълумотлар"),
+                    KeyboardButton(text="Тарифлар"),
+                ],
+                [
+                    KeyboardButton(text="⬅️Oртга"),
+                ]
+            ],
+            resize_keyboard=True
+        )
+    else:
+        markup = ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    KeyboardButton(text='Информация об инструкторах'),
+                    KeyboardButton(text='Информация об онлайн уроках'),
+                ],
+                [
+                    KeyboardButton(text="Тесты"),
+                    KeyboardButton(text="Тарифы"),
+                ],
+                [
+                    KeyboardButton(text="⬅️Назад"),
                 ]
             ],
             resize_keyboard=True
@@ -171,6 +215,11 @@ def categories():
             KeyboardButton(text=f"{i['toifa']}")
         )
     return keyboard
+
+
+def text_info():
+    res = requests.get(url=f"{BASE_URL}/client/info/1/")
+    return res.json()
 
 
 def text_client_reg():
